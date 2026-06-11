@@ -1,4 +1,6 @@
-function visualise_polyomino(Polyomino::Polyomino)
+using CairoMakie
+
+function visualize_polyomino(Polyomino::Polyomino)
 	height = maximum([r for (r, _) in Polyomino.coordinates])
 	length = maximum([c for (_, c) in Polyomino.coordinates])
 	
