@@ -18,8 +18,32 @@ end
 
 function all_valid_concatenations(p1, p2)
     sides = ["bottom", "up", "left", "right"]
-    pos1_width = missing
-    pos1_height = missing
-    pos2_width = missing
-    pos2_height = missing
+    pos1_width = poly_width(p1)
+    pos1_height = poly_height(p2)
+    pos2_width = poly_width(p1)
+    pos2_height = poly_height(p2)
+
+    matrix_tab = Dict("bottom" => 1, "up" => 2, "left" => 3, "right" => 4)
+
+    validation_matrix = [trues(pos1_width, pos2_width), trues(pos1_width, pos2_width),
+                        trues(pos1_height, pos2_height), trues(pos1_height, pos2_height)]
+
+    for side in sides
+        tab = matrix_tab[side]
+        if side == "bottom" || side == "up"
+            positions1 = pos1_width
+            positions2 = pos2_width
+        else
+            positions1 = pos1_height
+            positions2 = pos2_width
+        end
+        for pos1 in positions1
+            for pos2 in positions2
+                validation_matrix[tab, pos1, pos2] = concatenation_possible(p1, p2; side = Symbol(side), pos1 = pos1, pos2 = pos2)
+            end
+        end
+    end
+        
+
+    return validation_matrix
 end
