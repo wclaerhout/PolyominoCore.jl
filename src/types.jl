@@ -15,4 +15,4 @@ Base.:(==)(p1::Polyomino, p2::Polyomino) = p1.coordinates == p2.coordinates
 coordinates(p::Polyomino) = p.coordinates 
 
 poly_height(p::Polyomino) = maximum([r for (r, _) in coordinates(p)])
-poly_width(p::Polyomino) = maximum([c] for (_, c) in coordinates(p))
+poly_width(p::Polyomino) = maximum([c for (_, c) in coordinates(p)])
