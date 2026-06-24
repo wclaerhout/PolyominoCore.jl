@@ -13,7 +13,7 @@ Return cells of `poly` that are exposed on `side` (:top/:bottom/:left/:right),
 sorted along the edge (by column for top/bottom, by row for left/right).
 """
 function boundary_cells(poly::Polyomino, side::Symbol)
-	coords = poly.coordinates
+	coords = coordinates(poly)
 	cells, sortkey, primary = if side == :right
 		[(r, c) for (r, c) in coords if (r, c+1) ∉ coords], x -> (x[1], -x[2]), x -> x[1]
 	elseif side == :left
@@ -75,10 +75,10 @@ function concatenate(poly1::Polyomino, poly2::Polyomino;
 	dr = target[1] - anchor2[1]
 	dc = target[2] - anchor2[2]
 
-	translated = Set((r + dr, c + dc) for (r, c) in poly2.coordinates)
+	translated = Set((r + dr, c + dc) for (r, c) in coordinates(poly2))
 
-	isempty(intersect(poly1.coordinates, translated)) ||
+	isempty(intersect(coordinates(poly1), translated)) ||
 		error("Concatenation results in overlap (pos1=$pos1, pos2=$pos2, side=$side)")
 
-	return Polyomino(union(poly1.coordinates, translated))
+	return Polyomino(union(coordinates(poly1), translated))
 end
