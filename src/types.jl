@@ -10,6 +10,8 @@ struct Polyomino
 end
 
 Base.:(==)(p1::Polyomino, p2::Polyomino) = p1.coordinates == p2.coordinates
+# hash must agree with == so Polyomino works as a Set element / Dict key
+Base.hash(p::Polyomino, h::UInt) = hash(p.coordinates, h)
 
 # Creating accessor functions (decoupling internals from public interface)
 coordinates(p::Polyomino) = p.coordinates 
