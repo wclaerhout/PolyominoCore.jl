@@ -17,29 +17,6 @@ function concatenation_possible(p1, p2; side = "bottom", pos1 = 1, pos2 = 1)
 end
 
 """
-	is_connected(cells) -> Bool
-
-True if `cells` (a `Set` of `(r, c)`) forms one edge-connected (4-neighbour) blob.
-Empty set is not connected.
-"""
-function is_connected(cells::Set{Tuple{Int,Int}})
-	isempty(cells) && return false
-	start = first(cells)
-	seen  = Set([start])
-	stack = [start]
-	while !isempty(stack)
-		(r, c) = pop!(stack)
-		for nb in ((r+1, c), (r-1, c), (r, c+1), (r, c-1))
-			if nb in cells && !(nb in seen)
-				push!(seen, nb)
-				push!(stack, nb)
-			end
-		end
-	end
-	length(seen) == length(cells)
-end
-
-"""
 	all_splits(p) -> Vector{Tuple{Polyomino,Polyomino}}
 
 Reverse reaction (splitting `C -> A + B`): enumerate every way to partition `p`
