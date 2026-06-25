@@ -37,3 +37,20 @@ ring  = Set([(r, c) for r in 1:3 for c in 1:3 if (r, c) != (2, 2)])
 @test any(coordinates(a) == Polyomino(ring).coordinates && length(coordinates(b)) == 1 ||
           coordinates(b) == Polyomino(ring).coordinates && length(coordinates(a)) == 1
           for (a, b) in all_splits(full3))
+
+# --- unique splits with multiplicity ---
+
+# 1x3 straight tromino: two cuts, both give monomino + domino => one pair, multiplicity 2
+tri = Polyomino(Set([(1, 1), (1, 2), (1, 3)]))
+us = unique_splits(tri)
+@test length(us) == 1
+@test us[1][3] == 2
+
+# multiplicities always sum back to the raw split count
+for poly in (dom, sq, tri, full3)
+	@test sum(m for (_, _, m) in unique_splits(poly)) == length(all_splits(poly))
+end
+
+# 2x2 has no translation-equivalent product pairs: 6 raw splits, 6 unique, all multiplicity 1
+@test length(unique_splits(sq)) == 6
+@test all(m == 1 for (_, _, m) in unique_splits(sq))
