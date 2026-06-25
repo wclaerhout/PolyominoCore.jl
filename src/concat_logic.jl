@@ -16,6 +16,63 @@ function concatenation_possible(p1, p2; side = "bottom", pos1 = 1, pos2 = 1)
     end
 end
 
+"""
+	is_connected(cells) -> Bool
+
+True if `cells` (a `Set` of `(r, c)`) forms one edge-connected (4-neighbour) blob.
+Empty set is not connected.
+"""
+function is_connected(cells::Set{Tuple{Int,Int}})
+	isempty(cells) && return false
+	start = first(cells)
+	seen  = Set([start])
+	stack = [start]
+	while !isempty(stack)
+		(r, c) = pop!(stack)
+		for nb in ((r+1, c), (r-1, c), (r, c+1), (r, c-1))
+			if nb in cells && !(nb in seen)
+				push!(seen, nb)
+				push!(stack, nb)
+			end
+		end
+	end
+	length(seen) == length(cells)
+end
+
+"""
+	all_splits(p) -> Vector{Tuple{Polyomino,Polyomino}}
+
+Reverse reaction (splitting `C -> A + B`): enumerate every way to partition `p`
+into two non-empty connected polyominoes `(A, B)` with `A ∪ B == p`, `A ∩ B == ∅`.
+Each unordered split is returned once.
+
+Adjacency of `A` and `B` is automatic: `p` is connected, so two connected pieces
+that partition it must touch. Splitting is unrestricted (the general inverse of
+assembly); assembly is the restricted direction (no insertion into an enclosed
+cavity — see `docs/research_framing.md`).
+"""
+function all_splits(p::Polyomino)
+	cells = collect(coordinates(p))
+	n = length(cells)
+	n < 2 && return Tuple{Polyomino,Polyomino}[]
+
+	anchor = cells[1]              # pin into A so each unordered split is counted once
+	rest   = cells[2:end]
+	out    = Tuple{Polyomino,Polyomino}[]
+
+	for mask in 0:(2^(n-1) - 1)
+		A = Set{Tuple{Int,Int}}((anchor,))
+		for i in 1:(n-1)
+			(mask >> (i-1)) & 1 == 1 && push!(A, rest[i])
+		end
+		length(A) == n && continue          # B would be empty
+		B = setdiff(coordinates(p), A)
+		(is_connected(A) && is_connected(B)) || continue
+		push!(out, (Polyomino(A), Polyomino(B)))
+	end
+	out
+end
+
 function all_valid_concatenations(p1, p2)
     """
     output: vector of size 4 (bottom, top, left, right)
