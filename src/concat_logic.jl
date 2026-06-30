@@ -16,6 +16,68 @@ function concatenation_possible(p1, p2; side = "bottom", pos1 = 1, pos2 = 1)
     end
 end
 
+"""
+	all_splits(p) -> Vector{Tuple{Polyomino,Polyomino}}
+
+Reverse reaction (splitting `C -> A + B`): enumerate every way to partition `p`
+into two non-empty connected polyominoes `(A, B)` with `A ∪ B == p`, `A ∩ B == ∅`.
+Each unordered split is returned once.
+
+Adjacency of `A` and `B` is automatic: `p` is connected, so two connected pieces
+that partition it must touch. Splitting is unrestricted (the general inverse of
+assembly); assembly is the restricted direction (no insertion into an enclosed
+cavity — see `docs/research_framing.md`).
+"""
+function all_splits(p::Polyomino)
+	cells = collect(coordinates(p))
+	n = length(cells)
+	n < 2 && return Tuple{Polyomino,Polyomino}[]
+
+	anchor = cells[1]              # pin into A so each unordered split is counted once
+	rest   = cells[2:end]
+	out    = Tuple{Polyomino,Polyomino}[]
+
+	for mask in 0:(2^(n-1) - 1)
+		A = Set{Tuple{Int,Int}}((anchor,))
+		for i in 1:(n-1)
+			(mask >> (i-1)) & 1 == 1 && push!(A, rest[i])
+		end
+		length(A) == n && continue          # B would be empty
+		B = setdiff(coordinates(p), A)
+		(is_connected(A) && is_connected(B)) || continue
+		push!(out, (Polyomino(A), Polyomino(B)))
+	end
+	out
+end
+
+"""
+	unique_splits(p) -> Vector{Tuple{Polyomino,Polyomino,Int}}
+
+Collapse `all_splits(p)` to **unique unordered product shape-pairs**, each tagged with its
+**multiplicity** — the number of distinct cuts of `p` that yield that same pair of shapes
+(compared up to translation only, §2 of the research framing).
+
+The shape-pair is the reaction edge `C -> A + B` for the reachability hypergraph (scope A);
+the multiplicity is the **reaction degeneracy** (count of equivalent breakable bonds), a
+rate prefactor for the dynamical CRN (scope B). `sum(m for (_,_,m) in unique_splits(p))`
+equals `length(all_splits(p))`.
+"""
+function unique_splits(p::Polyomino)
+	KeyT   = Set{Set{Tuple{Int,Int}}}
+	counts = Dict{KeyT,Int}()
+	reps   = Dict{KeyT,Tuple{Polyomino,Polyomino}}()
+	for (a, b) in all_splits(p)
+		key = Set([coordinates(a), coordinates(b)])   # unordered, translation-normalized
+		if haskey(counts, key)
+			counts[key] += 1
+		else
+			counts[key] = 1
+			reps[key]   = (a, b)
+		end
+	end
+	[(reps[k][1], reps[k][2], counts[k]) for k in keys(counts)]
+end
+
 function all_valid_concatenations(p1, p2)
     """
     output: vector of size 4 (bottom, top, left, right)
