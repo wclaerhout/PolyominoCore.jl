@@ -2,7 +2,9 @@
 	is_connected(cells) -> Bool
 
 True if `cells` (a `Set` of `(r, c)`) forms one edge-connected (4-neighbour) blob.
-The empty set is not connected.
+The empty set is not connected. Based on a flood-fill algorithm.
+You just keep adding neighbouring cells to the stack until none are left, the length of the seen cells
+should equal the number of cells of your polyomino
 """
 function is_connected(cells::Set{Tuple{Int,Int}})
     isempty(cells) && return false
@@ -11,10 +13,10 @@ function is_connected(cells::Set{Tuple{Int,Int}})
     stack = [start]
     while !isempty(stack)
         (r, c) = pop!(stack)
-        for nb in ((r+1, c), (r-1, c), (r, c+1), (r, c-1))
+        for nb in ((r+1, c), (r-1, c), (r, c+1), (r, c-1)) # check if the new block is the neighbour of a block that is already in the set
             if nb in cells && !(nb in seen)
                 push!(seen, nb)
-                push!(stack, nb)
+                push!(stack, nb) # new cells that are neighbouring are added to the stack
             end
         end
     end
