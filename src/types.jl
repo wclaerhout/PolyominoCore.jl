@@ -39,8 +39,10 @@ Base.:(==)(p1::Polyomino, p2::Polyomino) = p1.coordinates == p2.coordinates
 # hash must agree with == so Polyomino works as a Set element / Dict key
 Base.hash(p::Polyomino, h::UInt) = hash(p.coordinates, h)
 
+# Indexing a polyomino Set{Tuple{Int, Int}} to get a coordinate
+
 # Creating accessor functions (decoupling internals from public interface)
-coordinates(p::Polyomino) = p.coordinates
+coordinates(p::Polyomino) = sort!(collect(p.coordinates))
 
 """
 	is_connected(p::Polyomino) -> Bool
