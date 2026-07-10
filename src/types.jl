@@ -52,3 +52,5 @@ is_connected(p::Polyomino) = is_connected(coordinates(p))
 
 poly_height(p::Polyomino) = maximum([r for (r, _) in coordinates(p)])
 poly_width(p::Polyomino) = maximum([c for (_, c) in coordinates(p)])
+
+n_blocks(p::Polyomino) = length(unique(coordinates(p))) # gives the number of blocks
