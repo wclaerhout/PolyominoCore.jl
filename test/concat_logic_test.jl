@@ -17,7 +17,7 @@ p4 = Polyomino(Set([(1,1), (1,2), (1,3)]))
 dom = Polyomino(Set([(1, 1), (1, 2)]))
 sp = all_splits(dom)
 @test length(sp) == 1
-@test all(coordinates(a) == Set([(1, 1)]) && coordinates(b) == Set([(1, 1)]) for (a, b) in sp)
+@test all(coordinates(a) == [(1, 1)] && coordinates(b) == [(1, 1)] for (a, b) in sp)
 
 # every split partitions all cells into two connected, disjoint, non-empty pieces
 sq = Polyomino(Set([(1, 1), (1, 2), (2, 1), (2, 2)]))   # 2x2
@@ -34,8 +34,8 @@ end
 # the cavity case: full 3x3 splits into ring + centre (reverse legal; assembly is not)
 full3 = Polyomino(Set([(r, c) for r in 1:3 for c in 1:3]))
 ring  = Set([(r, c) for r in 1:3 for c in 1:3 if (r, c) != (2, 2)])
-@test any(coordinates(a) == Polyomino(ring).coordinates && length(coordinates(b)) == 1 ||
-          coordinates(b) == Polyomino(ring).coordinates && length(coordinates(a)) == 1
+@test any(coordinates(a) == coordinates(Polyomino(ring)) && length(coordinates(b)) == 1 ||
+          coordinates(b) == coordinates(Polyomino(ring)) && length(coordinates(a)) == 1
           for (a, b) in all_splits(full3))
 
 # --- unique splits with multiplicity ---

@@ -63,7 +63,7 @@ rate prefactor for the dynamical CRN (scope B). `sum(m for (_,_,m) in unique_spl
 equals `length(all_splits(p))`.
 """
 function unique_splits(p::Polyomino)
-	KeyT   = Set{Set{Tuple{Int,Int}}}
+	KeyT   = Set{Vector{Tuple{Int,Int}}}   # `coordinates` returns a sorted (canonical) Vector
 	counts = Dict{KeyT,Int}()
 	reps   = Dict{KeyT,Tuple{Polyomino,Polyomino}}()
 	for (a, b) in all_splits(p)
