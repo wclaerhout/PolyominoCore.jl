@@ -62,3 +62,21 @@ poly_height(p::Polyomino) = maximum([r for (r, _) in coordinates(p)])
 poly_width(p::Polyomino) = maximum([c for (_, c) in coordinates(p)])
 
 n_blocks(p::Polyomino) = length(unique(coordinates(p))) # gives the number of blocks
+
+#----------------------------------------------------------------------------------
+
+struct Cell
+    x::Int
+    y::Int
+end
+
+struct Shift
+    dx::Int
+    dy::Int
+end
+
+Base.:-(a::Cell, b::Cell)  = Shift(a.x - b.x, a.y - b.y)   # point - point = vector
+Base.:+(c::Cell, s::Shift) = Cell(c.x + s.dx, c.y + s.dy)  # point + vector = point
+Base.:-(c::Cell, s::Shift) = Cell(c.x - s.dx, c.y - s.dy)
+Base.:+(a::Shift, b::Shift) = Shift(a.dx + b.dx, a.dy + b.dy)
+Base.:-(s::Shift) = Shift(-s.dx, -s.dy)
