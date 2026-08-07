@@ -55,21 +55,21 @@ function visualize_pathway(pathway::AbstractVector{Polyomino})
 end
 
 #-----------------------------
-pool0 = Vector{Polyomino}();
+# pool0 = Vector{Polyomino}();
 
-p2 = poly"
-        ##
-        "
-p3 = poly"
-        #
-        #
-        "
-push!(pool0, MONOMINO);
-push!(pool0, p2)
-push!(pool0, p3)
-for i in 1:3
-    push!(pool0, p3)
-end
-length(pool0)
+# p2 = poly"
+#         ##
+#         "
+# p3 = poly"
+#         #
+#         #
+#         "
+# push!(pool0, MONOMINO);
+# push!(pool0, p2)
+# push!(pool0, p3)
+# for i in 1:3
+#     push!(pool0, p3)
+# end
+# length(pool0)
 
-visualize_pathway(pool0)
+# visualize_pathway(pool0)
