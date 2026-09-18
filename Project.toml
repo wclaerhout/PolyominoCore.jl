@@ -1,0 +1,11 @@
+name = "Polyomino"
+uuid = "741bb4a1-64da-4b98-a1f2-8358f6fa25db"
+version = "0.1.0"
+
+[deps]
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[compat]
+CairoMakie = "0.15.11"
+Test = "1.11.0"

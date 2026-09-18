@@ -1,5 +1,3 @@
-using PolyominoCRN
-
 """
 Write some logic functions for concatenations.
 - concatenation_possible(p1, p2; side = , pos1, pos2) --> returns if a concatenation is check_valid_concat
