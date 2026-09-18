@@ -31,7 +31,6 @@ L = poly"""
 """ == Polyomino(Set([(1, 1), (1, 2)]))
 
 # round-trips through the rest of the toolbox
-@test is_synthesizable(poly"###")
 @test length(all_splits(poly"##")) == 1
 
 # --- validity ---

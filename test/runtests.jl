@@ -1,4 +1,4 @@
-using Polyomino
+using Polyominoes
 using Test
 
 @testset "Basic type functions testing" include("type_test.jl")

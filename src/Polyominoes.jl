@@ -1,4 +1,4 @@
-module Polyomino
+module Polyominoes
 
 include("types.jl")
 include("poly_parse.jl")
@@ -13,4 +13,4 @@ export concatenation_possible, all_valid_concatenations
 export is_connected, all_splits, unique_splits
 export visualize_polyomino, visualize_pathway
 
-end # module Polyomino
+end # module Polyominoes

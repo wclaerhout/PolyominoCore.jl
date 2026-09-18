@@ -1,4 +1,4 @@
-# Polyomino.jl
+# Polyominoes.jl
 
 A Julia implementation of polyominoes (sets of unit cells on a grid), compared up to
 translation only (no rotation/reflection). Extracted from
