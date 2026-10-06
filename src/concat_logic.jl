@@ -59,13 +59,20 @@ The shape-pair is the reaction edge `C -> A + B` for the reachability hypergraph
 the multiplicity is the **reaction degeneracy** (count of equivalent breakable bonds), a
 rate prefactor for the dynamical CRN (scope B). `sum(m for (_,_,m) in unique_splits(p))`
 equals `length(all_splits(p))`.
+
+With `symmetry = :rotation` (or `:full`) product shapes are additionally compared up to
+rotation (and reflection), so pairs that are rotated copies of each other merge and their
+multiplicities add. The returned representatives are the shapes as actually cut from `p`.
+The default `:translation` gives the original behaviour.
 """
-function unique_splits(p::Polyomino)
+function unique_splits(p::Polyomino; symmetry::Symbol = :translation)
+	check_symmetry(symmetry)
 	KeyT   = Set{Vector{Tuple{Int,Int}}}   # `coordinates` returns a sorted (canonical) Vector
 	counts = Dict{KeyT,Int}()
 	reps   = Dict{KeyT,Tuple{Polyomino,Polyomino}}()
 	for (a, b) in all_splits(p)
-		key = Set([coordinates(a), coordinates(b)])   # unordered, translation-normalized
+		# unordered, translation-normalized (and rotation-normalized if requested)
+		key = Set([coordinates(canonical(a; symmetry)), coordinates(canonical(b; symmetry))])
 		if haskey(counts, key)
 			counts[key] += 1
 		else
@@ -76,13 +83,24 @@ function unique_splits(p::Polyomino)
 	[(reps[k][1], reps[k][2], counts[k]) for k in keys(counts)]
 end
 
-function all_valid_concatenations(p1, p2)
-    """
-    output: vector of size 4 (bottom, top, left, right)
-            - every side (bottom, top,...) contains a matrix of size(poly1, poly2) with 0/false or 1/true
-            - so if bottom[1,2] = 1 this means that you can attach the second block of polyomino 2 to the first block of polyomino 1 --> valid concatenation
-            - rows = pos1, cols = pos2
-    """
+"""
+	all_valid_concatenations(p1, p2; symmetry = :translation)
+
+output: vector of size 4 (bottom, top, left, right)
+        - every side (bottom, top,...) contains a matrix of size(poly1, poly2) with 0/false or 1/true
+        - so if bottom[1,2] = 1 this means that you can attach the second block of polyomino 2 to the first block of polyomino 1 --> valid concatenation
+        - rows = pos1, cols = pos2
+
+With `symmetry = :rotation` (or `:full`) `p2` may also be rotated (and reflected) before
+attaching. The output is then a `Vector` of `orientation => matrices` pairs, one per
+distinct orientation of `p2` (see `Polyominoes.orientations`), where `matrices` is the
+4-vector above for that orientation. Pass the orientation as `p2` to `concatenate`.
+"""
+function all_valid_concatenations(p1, p2; symmetry::Symbol = :translation)
+    check_symmetry(symmetry)
+    symmetry == :translation ||
+        return [q => all_valid_concatenations(p1, q) for q in orientations(p2; symmetry)]
+
     sides = ["bottom", "top", "left", "right"]
     pos1_width  = poly_width(p1)
     pos1_height = poly_height(p1)
