@@ -5,3 +5,4 @@ using Test
 @testset "Polyomino parsing" include("poly_parse_test.jl")
 @testset "Concatenation testing" include("concatenation_test.jl")
 @testset "Concatenation logic" include("concat_logic_test.jl")
+@testset "Symmetry" include("symmetry_test.jl")
