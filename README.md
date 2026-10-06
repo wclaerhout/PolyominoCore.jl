@@ -1,7 +1,13 @@
+<p align="center">
+  <img src="assets/logo.svg" alt="Polyominoes.jl logo" width="700">
+</p>
+
 # Polyominoes.jl
 
 A Julia implementation of polyominoes (sets of unit cells on a grid), compared up to
-translation only (no rotation/reflection). Extracted from
+translation by default (`==` and `hash` stay translation-only). Rotation and reflection
+are opt-in through the `symmetry` keyword (`:translation`, `:rotation` or `:full`) on
+`unique_splits` and `all_valid_concatenations`. Extracted from
 [`polyomino_crn`](https://github.com/wclaerhout/polyomino_crn), which builds a
 hypergraph chemical reaction network and quality-diversity search on top of this core.
 
