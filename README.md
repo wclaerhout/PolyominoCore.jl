@@ -4,12 +4,14 @@
 
 # Polyominoes.jl
 
-A Julia implementation of polyominoes (sets of unit cells on a grid), compared up to
-translation by default (`==` and `hash` stay translation-only). Rotation and reflection
-are opt-in through the `symmetry` keyword (`:translation`, `:rotation` or `:full`) on
-`unique_splits`, `attachments` and `polyominoes`. Extracted from
-[`polyomino_crn`](https://github.com/wclaerhout/polyomino_crn), which builds a
-hypergraph chemical reaction network and quality-diversity search on top of this core.
+[![CI](https://github.com/wclaerhout/Polyominoes.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/wclaerhout/Polyominoes.jl/actions/workflows/CI.yml)
+[![Docs](https://img.shields.io/badge/docs-dev-blue.svg)](https://wclaerhout.github.io/Polyominoes.jl/dev/)
+
+A small, dependency-free Julia package for **polyominoes**: edge-connected sets of unit
+squares on the grid. It gives you a shape type you can draw and parse as ASCII,
+opt-in rotation/reflection symmetry, enumeration of fixed, one-sided and free
+polyominoes (tested against OEIS), splitting and joining, a few shape properties, and
+optional plotting through Makie.
 
 ## Example
 
@@ -19,35 +21,49 @@ using Polyominoes
 L = poly"""
 #.
 ##
-"""                                         # an L-tromino: '#' filled, '.' empty
-length(L), size(L)                          # 3 cells, 2×2 bounding box; (1, 1) in L == true
-length(all_splits(L))                       # 2 ways to cut it into two connected pieces
-unique_splits(L; symmetry = :rotation)      # 1 distinct pair (monomino + domino), multiplicity 2
-length(polyominoes(5; symmetry = :full))    # 12 free pentominoes
-attachments(L, poly"#"; symmetry = :full)   # the 4 free tetrominoes that contain L (all but I)
+"""                                          # '#' filled, '.' empty; prints the same way
+length(L), size(L)                           # (3, (2, 2)): 3 cells, 2×2 bounding box
+length(polyominoes(5; symmetry = :full))     # 12 free pentominoes
+attachments(L, poly"#"; symmetry = :full)    # the L, T, S and O tetrominoes (all contain L)
+unique_splits(L; symmetry = :rotation)       # 1 distinct cut (domino + monomino), done 2 ways
+perimeter(L), nholes(L)                      # (8, 0)
+Polyominoes.symmetry_group(L)                # [:identity, :mirror_diag]
+using CairoMakie; visualize_polyomino(L)     # plotting loads with a Makie backend
 ```
 
-## Core Concepts
+## Conventions
 
-- **`Polyomino`**: a connected set of grid cells `(r, c)` (rows grow upward), normalized
-  to a canonical translation. Behaves like a read-only set of cells: `length`, `size`
-  (bounding box), `in` and iteration. Printing one shows its `#`/`.` drawing.
-- **Enumeration**: `polyominoes(n; symmetry)` lists every fixed (`:translation`),
-  one-sided (`:rotation`) or free (`:full`) polyomino with `n` cells; the counts are
-  tested against OEIS A001168, A000988 and A000105 for n = 1…10.
-- **Properties**: `perimeter`, `nholes` and `Polyominoes.symmetry_group` (the
-  symmetries of the square that leave a shape unchanged).
-- **Parsing**: build a `Polyomino` from an ASCII drawing via `parse_polyomino` / `poly"..."`.
-- **Joining**: `attach(a, b, offset)` joins two shapes at an explicit offset;
-  `attachments(a, b; symmetry)` lists every distinct shape obtained by placing `b`
-  (in any orientation `symmetry` allows) edge-to-edge with `a`.
-- **Splitting**: enumerate ways to split a polyomino into connected pieces (`all_splits`,
-  `unique_splits`).
-- **Visualization**: plot a single polyomino or a sequence of polyominoes
-  (`visualize_polyomino`, `visualize_pathway`). Plotting is a package extension: it
-  becomes available once a Makie backend is loaded (`using CairoMakie`), so
-  `using Polyominoes` alone does not pull in Makie.
+- Cells are `(r, c)` tuples. **Rows grow upward**, columns to the right; `(1, 1)` is the
+  bottom-left cell of the bounding box. In ASCII drawings the top line is the top row.
+- A `Polyomino` is a **fixed** polyomino: `==` and `hash` compare up to translation only.
+  Pass `symmetry = :rotation` (one-sided) or `symmetry = :full` (free) to the functions
+  that accept it, or compare `Polyominoes.canonical` forms.
 
-## Status
+## What's included
 
-Work in progress.
+| Area | Names |
+|---|---|
+| Type and construction | `Polyomino`, `parse_polyomino`, `poly"..."`, `coordinates`, `length`, `size`, `in`, iteration |
+| Symmetry (public, not exported) | `rotate90`, `reflect`, `orientations`, `canonical`, `is_equivalent`, `symmetry_group` |
+| Enumeration | `polyominoes(n; symmetry)` |
+| Structure | `is_connected`, `perimeter`, `nholes` |
+| Splitting | `all_splits`, `unique_splits(p; symmetry)` |
+| Joining | `attach(a, b, offset)`, `attachments(a, b; symmetry)` |
+| Plotting (with Makie) | `visualize_polyomino`, `visualize_pathway` |
+
+See the [documentation](https://wclaerhout.github.io/Polyominoes.jl/dev/) for a tutorial
+and the full API.
+
+## How it differs from Polyomino.jl
+
+[Polyomino.jl](https://github.com/PhoenixSmaug/Polyomino.jl) (singular) generates random
+polyominoes and solves chess problems on them: rook and queen placement, guarding sets
+and minimal line covers. Polyominoes.jl does none of that. It is a general core for the
+shapes themselves: representation, symmetry, exhaustive enumeration, splitting and
+joining.
+
+## Origin
+
+Extracted from [`polyomino_crn`](https://github.com/wclaerhout/polyomino_crn), research
+code that builds a chemical reaction network and quality-diversity search on top of
+this core. Nothing in this package depends on that context.
