@@ -4,10 +4,19 @@
 True if [`concatenate`](@ref) can attach `p2` to `p1` with these arguments: both
 positions are in range and the placement does not overlap. `side` may be a `Symbol`
 or a string; an unknown side throws an `ArgumentError`.
+
+!!! warning "Deprecated"
+    Will be removed in v0.2. Use [`attachments`](@ref) to list every way to join two
+    shapes.
 """
 function concatenation_possible(p1::Polyomino, p2::Polyomino;
                                 side = :bottom, pos1::Int = 1, pos2::Int = 1)
-    offset = attach_offset(p1, p2, Symbol(side), pos1, pos2)
+    depwarn_joining(:concatenation_possible)
+    _concatenation_possible(p1, p2, Symbol(side), pos1, pos2)
+end
+
+function _concatenation_possible(p1::Polyomino, p2::Polyomino, side::Symbol, pos1::Int, pos2::Int)
+    offset = attach_offset(p1, p2, side, pos1, pos2)
     offset !== nothing && !overlaps(p1, p2, offset)
 end
 
@@ -112,11 +121,19 @@ With `symmetry = :rotation` (or `:full`) `p2` may also be rotated (and reflected
 attaching. The output is then a `Vector` of `orientation => matrices` pairs, one per
 distinct orientation of `p2` (see `Polyominoes.orientations`), where `matrices` is the
 4-vector above for that orientation. Pass the orientation as `p2` to `concatenate`.
+
+!!! warning "Deprecated"
+    Will be removed in v0.2. Use [`attachments`](@ref), which returns the distinct
+    joined shapes directly (pass `placements = true` to also get the offsets).
 """
 function all_valid_concatenations(p1::Polyomino, p2::Polyomino; symmetry::Symbol = :translation)
+    depwarn_joining(:all_valid_concatenations)
     check_symmetry(symmetry)
-    symmetry == :translation ||
-        return [q => all_valid_concatenations(p1, q) for q in orientations(p2; symmetry)]
+    symmetry == :translation && return _all_valid_concatenations(p1, p2)
+    [q => _all_valid_concatenations(p1, q) for q in orientations(p2; symmetry)]
+end
+
+function _all_valid_concatenations(p1::Polyomino, p2::Polyomino)
 
     sides = ["bottom", "top", "left", "right"]
     pos1_height, pos1_width = size(p1)
@@ -138,7 +155,7 @@ function all_valid_concatenations(p1::Polyomino, p2::Polyomino; symmetry::Symbol
         end
         for pos1 in 1:positions1
             for pos2 in 1:positions2
-                validation_matrix[tab][pos1, pos2] = concatenation_possible(p1, p2; side = Symbol(side), pos1 = pos1, pos2 = pos2)
+                validation_matrix[tab][pos1, pos2] = _concatenation_possible(p1, p2, Symbol(side), pos1, pos2)
             end
         end
     end
