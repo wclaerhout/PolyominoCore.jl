@@ -1,17 +1,14 @@
 """
-    concatenation_possible(p1, p2; side = "bottom", pos1 = 1, pos2 = 1) -> Bool
+    concatenation_possible(p1, p2; side = :bottom, pos1 = 1, pos2 = 1) -> Bool
 
-True if [`concatenate`](@ref) can attach `p2` to `p1` with these arguments, i.e. the
-result does not overlap and is a valid polyomino.
+True if [`concatenate`](@ref) can attach `p2` to `p1` with these arguments: both
+positions are in range and the placement does not overlap. `side` may be a `Symbol`
+or a string; an unknown side throws an `ArgumentError`.
 """
-
-function concatenation_possible(p1, p2; side = "bottom", pos1 = 1, pos2 = 1)
-    try 
-        concatenate(p1, p2; side = Symbol(side), pos1 = pos1, pos2 = pos2)
-        return true
-    catch
-        return false
-    end
+function concatenation_possible(p1::Polyomino, p2::Polyomino;
+                                side = :bottom, pos1::Int = 1, pos2::Int = 1)
+    offset = attach_offset(p1, p2, Symbol(side), pos1, pos2)
+    offset !== nothing && !overlaps(p1, p2, offset)
 end
 
 """
@@ -25,25 +22,51 @@ that partition it must touch. No other restriction applies; for example, a shape
 may be split into a ring and the piece that fills its hole.
 """
 function all_splits(p::Polyomino)
-    cells = collect(coordinates(p))
+    cells = coordinates(p)
     n = length(cells)
-    n < 2 && return Tuple{Polyomino,Polyomino}[]
+    out = Tuple{Polyomino,Polyomino}[]
+    n < 2 && return out
+    n <= 63 || throw(ArgumentError("all_splits: polyomino too large ($n cells; max 63)"))
 
-    anchor = cells[1]              # pin into A so each unordered split is counted once
-    rest   = cells[2:end]
-    out    = Tuple{Polyomino,Polyomino}[]
+    # cell i <-> bit i-1; nbrs[i] = bitmask of the edge-neighbours of cell i
+    nbrs = [reduce(|, (UInt64(1) << (j - 1) for j in 1:n if abs(r - cells[j][1]) + abs(c - cells[j][2]) == 1);
+                   init = UInt64(0)) for (r, c) in cells]
+    full = (UInt64(1) << n) - 1
 
-    for mask in 0:(2^(n-1) - 1)
-        A = Set{Tuple{Int,Int}}((anchor,))
-        for i in 1:(n-1)
-            (mask >> (i-1)) & 1 == 1 && push!(A, rest[i])
-        end
-        length(A) == n && continue          # B would be empty
-        B = setdiff(coordinates(p), A)
-        (is_connected(A) && is_connected(B)) || continue
-        push!(out, (Polyomino(A), Polyomino(B)))
+    # cell 1 is pinned into A so each unordered split is counted once
+    for mask in UInt64(0):((UInt64(1) << (n - 1)) - 1)
+        A = UInt64(1) | (mask << 1)
+        A == full && continue                   # B would be empty
+        B = full & ~A
+        (connected_bits(A, nbrs) && connected_bits(B, nbrs)) || continue
+        push!(out, (cells_piece(cells, A), cells_piece(cells, B)))
     end
     out
+end
+
+# Is the cell subset `S` (a bitmask) edge-connected? Flood fill from its lowest cell.
+function connected_bits(S::UInt64, nbrs::Vector{UInt64})
+    seen = S & -S
+    while true
+        grown = seen
+        b = seen
+        while b != 0
+            grown |= nbrs[trailing_zeros(b) + 1] & S
+            b &= b - 1
+        end
+        grown == seen && return seen == S
+        seen = grown
+    end
+end
+
+function cells_piece(cells, S::UInt64)
+    piece = Vector{Tuple{Int,Int}}(undef, count_ones(S))
+    k = 0
+    while S != 0
+        piece[k += 1] = cells[trailing_zeros(S) + 1]
+        S &= S - 1
+    end
+    _polyomino_unchecked(piece)   # connectivity already checked
 end
 
 """
@@ -56,25 +79,25 @@ equals `length(all_splits(p))`.
 
 With `symmetry = :rotation` (or `:full`) product shapes are additionally compared up to
 rotation (and reflection), so pairs that are rotated copies of each other merge and their
-multiplicities add. The returned representatives are the shapes as actually cut from `p`.
-The default `:translation` gives the original behaviour.
+multiplicities add. The returned representatives are the shapes as actually cut from `p`,
+in the order they first appear in `all_splits(p)`.
 """
 function unique_splits(p::Polyomino; symmetry::Symbol = :translation)
     check_symmetry(symmetry)
-    KeyT   = Set{Vector{Tuple{Int,Int}}}   # `coordinates` returns a sorted (canonical) Vector
-    counts = Dict{KeyT,Int}()
-    reps   = Dict{KeyT,Tuple{Polyomino,Polyomino}}()
+    index = Dict{Tuple{Polyomino,Polyomino},Int}()   # unordered shape pair -> slot in `out`
+    out   = Tuple{Polyomino,Polyomino,Int}[]
     for (a, b) in all_splits(p)
-        # unordered, translation-normalized (and rotation-normalized if requested)
-        key = Set([coordinates(canonical(a; symmetry)), coordinates(canonical(b; symmetry))])
-        if haskey(counts, key)
-            counts[key] += 1
+        ca, cb = canonical(a; symmetry), canonical(b; symmetry)
+        key = coordinates(ca) <= coordinates(cb) ? (ca, cb) : (cb, ca)
+        i = get(index, key, 0)
+        if i == 0
+            push!(out, (a, b, 1))
+            index[key] = length(out)
         else
-            counts[key] = 1
-            reps[key]   = (a, b)
+            out[i] = (out[i][1], out[i][2], out[i][3] + 1)
         end
     end
-    [(reps[k][1], reps[k][2], counts[k]) for k in keys(counts)]
+    out
 end
 
 """
@@ -90,16 +113,14 @@ attaching. The output is then a `Vector` of `orientation => matrices` pairs, one
 distinct orientation of `p2` (see `Polyominoes.orientations`), where `matrices` is the
 4-vector above for that orientation. Pass the orientation as `p2` to `concatenate`.
 """
-function all_valid_concatenations(p1, p2; symmetry::Symbol = :translation)
+function all_valid_concatenations(p1::Polyomino, p2::Polyomino; symmetry::Symbol = :translation)
     check_symmetry(symmetry)
     symmetry == :translation ||
         return [q => all_valid_concatenations(p1, q) for q in orientations(p2; symmetry)]
 
     sides = ["bottom", "top", "left", "right"]
-    pos1_width  = poly_width(p1)
-    pos1_height = poly_height(p1)
-    pos2_width  = poly_width(p2)
-    pos2_height = poly_height(p2)
+    pos1_height, pos1_width = size(p1)
+    pos2_height, pos2_width = size(p2)
 
     matrix_tab = Dict("bottom" => 1, "top" => 2, "left" => 3, "right" => 4)
 

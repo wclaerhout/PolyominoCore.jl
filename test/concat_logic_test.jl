@@ -54,3 +54,64 @@ end
 # 2x2 has no translation-equivalent product pairs: 6 raw splits, 6 unique, all multiplicity 1
 @test length(unique_splits(sq)) == 6
 @test all(m == 1 for (_, _, m) in unique_splits(sq))
+# --- concatenation_possible: no try/catch ---
+
+@test concatenation_possible(p1, p1; side = :bottom) == concatenation_possible(p1, p1; side = "bottom")
+@test concatenation_possible(p1, p1; side = :bottom, pos1 = 99) == false     # out of range
+@test concatenation_possible(p1, p1; side = :bottom, pos2 = 0) == false
+@test_throws ArgumentError concatenation_possible(p1, p1; side = :diagonal)  # caller bug surfaces
+@test_throws ArgumentError concatenate(p1, p1; side = :diagonal)
+@test_throws ErrorException concatenate(p1, p1; side = :bottom, pos1 = 99)
+# agrees with whether `concatenate` succeeds, for every side and position
+for a in (p1, p3, p4, poly"""
+    ###
+    #.#
+    """), b in (p1, p3, p4), side in (:top, :bottom, :left, :right)
+    n1 = length(Polyominoes.boundary_cells(a, side))
+    n2 = length(Polyominoes.boundary_cells(b, Polyominoes.opposite_side(side)))
+    for i in 0:n1 + 1, j in 0:n2 + 1
+        ok = try
+            concatenate(a, b; side, pos1 = i, pos2 = j); true
+        catch e
+            e isa ErrorException || rethrow()
+            false
+        end
+        @test concatenation_possible(a, b; side, pos1 = i, pos2 = j) == ok
+    end
+end
+
+# --- all_splits matches a naive subset enumeration ---
+
+# every partition into two connected parts, each unordered pair once (cell 1 is in A),
+# tallied by the pair of shapes
+function split_tally(splits)
+    d = Dict{Set{Polyomino},Int}()
+    for (a, b) in splits
+        k = Set([a, b])
+        d[k] = get(d, k, 0) + 1
+    end
+    d
+end
+function all_splits_reference(p)
+    cells = coordinates(p)
+    n = length(cells)
+    out = Tuple{Polyomino,Polyomino}[]
+    for mask in 1:2:(2^n - 2)                      # odd masks: cell 1 always in A
+        A = [cells[i] for i in 1:n if (mask >> (i - 1)) & 1 == 1]
+        B = setdiff(cells, A)
+        is_connected(A) && is_connected(B) && push!(out, (Polyomino(A), Polyomino(B)))
+    end
+    out
+end
+for p in (p1, p3, p4, poly"#", poly"""
+    ###
+    #.#
+    ###
+    """, poly"""
+    .##.
+    ####
+    .#..
+    """)
+    @test split_tally(all_splits(p)) == split_tally(all_splits_reference(p))
+    @test all(length(a) + length(b) == length(p) for (a, b) in all_splits(p))
+end

@@ -18,14 +18,14 @@ check_symmetry(symmetry::Symbol) = symmetry in SYMMETRIES ||
 
 Rotate `p` a quarter turn counter-clockwise (rows point up, columns point right).
 """
-rotate90(p::Polyomino) = Polyomino(Set((c, -r) for (r, c) in p.coordinates)) # constructor re-normalizes
+rotate90(p::Polyomino) = _polyomino_unchecked([(c, -r) for (r, c) in coordinates(p)])
 
 """
     reflect(p) -> Polyomino
 
 Mirror `p` left-right.
 """
-reflect(p::Polyomino) = Polyomino(Set((r, -c) for (r, c) in p.coordinates))
+reflect(p::Polyomino) = _polyomino_unchecked([(r, -c) for (r, c) in coordinates(p)])
 
 """
     orientations(p; symmetry = :translation) -> Vector{Polyomino}
