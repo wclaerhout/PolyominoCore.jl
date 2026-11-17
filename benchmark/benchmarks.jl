@@ -40,6 +40,12 @@ results = (
     unique_splits_8 = @belapsed(foreach(unique_splits, $shapes8), samples = 5, evals = 1),
     dict_keys_8 = @belapsed(count_shapes($keys8)),
 )
+if isdefined(Polyominoes, :polyominoes)   # since Phase 2
+    results = (; results...,
+        polyominoes_10 = @belapsed(polyominoes(10), samples = 3, evals = 1),
+        polyominoes_10_free = @belapsed(polyominoes(10; symmetry = :full), samples = 3, evals = 1),
+    )
+end
 
 for (k, t) in pairs(results)
     println(rpad(k, 18), lpad(round(t * 1e3; digits = 2), 10), " ms")

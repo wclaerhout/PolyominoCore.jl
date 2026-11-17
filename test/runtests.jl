@@ -7,6 +7,7 @@ using Aqua
 @testset "Concatenation testing" include("concatenation_test.jl")
 @testset "Concatenation logic" include("concat_logic_test.jl")
 @testset "Symmetry" include("symmetry_test.jl")
+@testset "Enumeration" include("enumeration_test.jl")
 
 @testset "Plotting without Makie" begin
     # the extension must not be loaded before Makie is
