@@ -1,8 +1,8 @@
 """
-Write some logic functions for concatenations.
-- concatenation_possible(p1, p2; side = , pos1, pos2) --> returns if a concatenation is check_valid_concat
-- all_valid_concatenations(p1, p2) --> returns all the possible valid combinations for adding p2 to p1
-- unique_concatenations(p1, p2) --> filters out duplicate concatenations (some concatenations give identical results --> redundant)
+    concatenation_possible(p1, p2; side = "bottom", pos1 = 1, pos2 = 1) -> Bool
+
+True if [`concatenate`](@ref) can attach `p2` to `p1` with these arguments, i.e. the
+result does not overlap and is a valid polyomino.
 """
 
 function concatenation_possible(p1, p2; side = "bottom", pos1 = 1, pos2 = 1)
@@ -15,49 +15,43 @@ function concatenation_possible(p1, p2; side = "bottom", pos1 = 1, pos2 = 1)
 end
 
 """
-	all_splits(p) -> Vector{Tuple{Polyomino,Polyomino}}
+    all_splits(p) -> Vector{Tuple{Polyomino,Polyomino}}
 
-Reverse reaction (splitting `C -> A + B`): enumerate every way to partition `p`
-into two non-empty connected polyominoes `(A, B)` with `A ∪ B == p`, `A ∩ B == ∅`.
-Each unordered split is returned once.
+Enumerate every way to partition `p` into two non-empty connected polyominoes
+`(A, B)` with `A ∪ B == p`, `A ∩ B == ∅`. Each unordered split is returned once.
 
 Adjacency of `A` and `B` is automatic: `p` is connected, so two connected pieces
-that partition it must touch. Splitting is unrestricted (the general inverse of
-assembly); assembly is the restricted direction (no insertion into an enclosed
-cavity — see `docs/research_framing.md`).
+that partition it must touch. No other restriction applies; for example, a shape
+may be split into a ring and the piece that fills its hole.
 """
 function all_splits(p::Polyomino)
-	cells = collect(coordinates(p))
-	n = length(cells)
-	n < 2 && return Tuple{Polyomino,Polyomino}[]
+    cells = collect(coordinates(p))
+    n = length(cells)
+    n < 2 && return Tuple{Polyomino,Polyomino}[]
 
-	anchor = cells[1]              # pin into A so each unordered split is counted once
-	rest   = cells[2:end]
-	out    = Tuple{Polyomino,Polyomino}[]
+    anchor = cells[1]              # pin into A so each unordered split is counted once
+    rest   = cells[2:end]
+    out    = Tuple{Polyomino,Polyomino}[]
 
-	for mask in 0:(2^(n-1) - 1)
-		A = Set{Tuple{Int,Int}}((anchor,))
-		for i in 1:(n-1)
-			(mask >> (i-1)) & 1 == 1 && push!(A, rest[i])
-		end
-		length(A) == n && continue          # B would be empty
-		B = setdiff(coordinates(p), A)
-		(is_connected(A) && is_connected(B)) || continue
-		push!(out, (Polyomino(A), Polyomino(B)))
-	end
-	out
+    for mask in 0:(2^(n-1) - 1)
+        A = Set{Tuple{Int,Int}}((anchor,))
+        for i in 1:(n-1)
+            (mask >> (i-1)) & 1 == 1 && push!(A, rest[i])
+        end
+        length(A) == n && continue          # B would be empty
+        B = setdiff(coordinates(p), A)
+        (is_connected(A) && is_connected(B)) || continue
+        push!(out, (Polyomino(A), Polyomino(B)))
+    end
+    out
 end
 
 """
-	unique_splits(p) -> Vector{Tuple{Polyomino,Polyomino,Int}}
+    unique_splits(p) -> Vector{Tuple{Polyomino,Polyomino,Int}}
 
-Collapse `all_splits(p)` to **unique unordered product shape-pairs**, each tagged with its
-**multiplicity** — the number of distinct cuts of `p` that yield that same pair of shapes
-(compared up to translation only, §2 of the research framing).
-
-The shape-pair is the reaction edge `C -> A + B` for the reachability hypergraph (scope A);
-the multiplicity is the **reaction degeneracy** (count of equivalent breakable bonds), a
-rate prefactor for the dynamical CRN (scope B). `sum(m for (_,_,m) in unique_splits(p))`
+Collapse `all_splits(p)` to **unique unordered pairs of shapes**, each tagged with its
+**multiplicity**: the number of distinct cuts of `p` that yield that same pair of shapes
+(compared up to translation by default). `sum(m for (_,_,m) in unique_splits(p))`
 equals `length(all_splits(p))`.
 
 With `symmetry = :rotation` (or `:full`) product shapes are additionally compared up to
@@ -66,25 +60,25 @@ multiplicities add. The returned representatives are the shapes as actually cut 
 The default `:translation` gives the original behaviour.
 """
 function unique_splits(p::Polyomino; symmetry::Symbol = :translation)
-	check_symmetry(symmetry)
-	KeyT   = Set{Vector{Tuple{Int,Int}}}   # `coordinates` returns a sorted (canonical) Vector
-	counts = Dict{KeyT,Int}()
-	reps   = Dict{KeyT,Tuple{Polyomino,Polyomino}}()
-	for (a, b) in all_splits(p)
-		# unordered, translation-normalized (and rotation-normalized if requested)
-		key = Set([coordinates(canonical(a; symmetry)), coordinates(canonical(b; symmetry))])
-		if haskey(counts, key)
-			counts[key] += 1
-		else
-			counts[key] = 1
-			reps[key]   = (a, b)
-		end
-	end
-	[(reps[k][1], reps[k][2], counts[k]) for k in keys(counts)]
+    check_symmetry(symmetry)
+    KeyT   = Set{Vector{Tuple{Int,Int}}}   # `coordinates` returns a sorted (canonical) Vector
+    counts = Dict{KeyT,Int}()
+    reps   = Dict{KeyT,Tuple{Polyomino,Polyomino}}()
+    for (a, b) in all_splits(p)
+        # unordered, translation-normalized (and rotation-normalized if requested)
+        key = Set([coordinates(canonical(a; symmetry)), coordinates(canonical(b; symmetry))])
+        if haskey(counts, key)
+            counts[key] += 1
+        else
+            counts[key] = 1
+            reps[key]   = (a, b)
+        end
+    end
+    [(reps[k][1], reps[k][2], counts[k]) for k in keys(counts)]
 end
 
 """
-	all_valid_concatenations(p1, p2; symmetry = :translation)
+    all_valid_concatenations(p1, p2; symmetry = :translation)
 
 output: vector of size 4 (bottom, top, left, right)
         - every side (bottom, top,...) contains a matrix of size(poly1, poly2) with 0/false or 1/true
