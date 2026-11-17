@@ -27,7 +27,7 @@ mono = poly"#"
 for q in orientations(L4; symmetry = :full)
     @test minimum(r for (r, _) in coordinates(q)) == 1
     @test minimum(c for (_, c) in coordinates(q)) == 1
-    @test n_blocks(q) == 4
+    @test length(q) == 4
 end
 
 # --- orientations ---
@@ -92,9 +92,6 @@ for p in shapes
     # same pairs and multiplicities; the order is first-seen (the reference's is Dict order)
     @test Set(unique_splits(p)) == Set(unique_splits_reference(p))
     @test Set(unique_splits(p; symmetry = :translation)) == Set(unique_splits_reference(p))
-    for q in shapes
-        @test all_valid_concatenations(p, q) isa Vector{BitMatrix}
-    end
 end
 
 # --- unique_splits with symmetry ---
@@ -107,11 +104,3 @@ us_rot = unique_splits(sq; symmetry = :rotation)
 for p in shapes, sym in (:rotation, :full)
     @test sum((m for (_, _, m) in unique_splits(p; symmetry = sym)); init = 0) == length(all_splits(p))
 end
-
-# --- all_valid_concatenations with symmetry ---
-
-avc = all_valid_concatenations(sq, I3; symmetry = :rotation)
-@test length(avc) == 2                                       # horizontal and vertical I3
-@test first(avc).first == I3
-@test first(avc).second == all_valid_concatenations(sq, I3)  # first orientation = translation result
-@test any(m -> any(m), last(avc).second)                     # vertical I3 attaches somewhere

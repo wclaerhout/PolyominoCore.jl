@@ -3,18 +3,14 @@ module Polyominoes
 include("types.jl")
 include("symmetry.jl")
 include("poly_parse.jl")
-include("concatenation.jl")
-include("concat_logic.jl")
+include("splits.jl")
 include("enumeration.jl")
 include("attach.jl")
 include("properties.jl")
 include("visualisation.jl")
-include("deprecated.jl")
 
-export Polyomino, coordinates, Cell, Shift
+export Polyomino, coordinates
 export parse_polyomino, @poly_str
-export concatenate
-export concatenation_possible, all_valid_concatenations
 export is_connected, all_splits, unique_splits
 export polyominoes
 export attach, attachments

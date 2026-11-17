@@ -75,21 +75,3 @@ for n in 2:6, sym in (:translation, :full)
                 for s in attachments(p, mono; symmetry = sym))
     @test grown == Set(polyominoes(n; symmetry = sym))
 end
-
-# The deprecated side/pos joins are a subset of `attachments` (they only use the outermost
-# boundary cells, so they cannot reach into a cavity).
-for a in (dom, L3, U), b in (mono, dom, L3)
-    all_res = Set(attachments(a, b))
-    m = Polyominoes._all_valid_concatenations(a, b)
-    for (k, side) in enumerate((:bottom, :top, :left, :right)), I in CartesianIndices(m[k])
-        m[k][I] || continue
-        @test Polyominoes._concatenate(a, b, side, I[1], I[2]) in all_res
-    end
-end
-
-# --- the old API is deprecated but still works ---
-
-@test (@test_deprecated concatenate(mono, mono; side = :right)) == dom
-@test (@test_deprecated concatenation_possible(mono, mono; side = :right)) == true
-@test (@test_deprecated all_valid_concatenations(mono, mono)) isa Vector{BitMatrix}
-@test (@test_deprecated Polyominoes.boundary_cells(dom, :top)) == [(1, 1), (1, 2)]

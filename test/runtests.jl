@@ -4,8 +4,7 @@ using Aqua
 
 @testset "Basic type functions testing" include("type_test.jl")
 @testset "Polyomino parsing" include("poly_parse_test.jl")
-@testset "Concatenation testing" include("concatenation_test.jl")
-@testset "Concatenation logic" include("concat_logic_test.jl")
+@testset "Splitting" include("splits_test.jl")
 @testset "Symmetry" include("symmetry_test.jl")
 @testset "Enumeration" include("enumeration_test.jl")
 @testset "Attaching" include("attach_test.jl")

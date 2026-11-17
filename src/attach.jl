@@ -1,5 +1,9 @@
 const NEIGHBOURS = ((1, 0), (-1, 0), (0, 1), (0, -1))
 
+# Does `b` shifted by `(dr, dc)` overlap `a`?
+overlaps(a::Polyomino, b::Polyomino, (dr, dc)) =
+    any(((r, c),) -> (r + dr, c + dc) in a, coordinates(b))
+
 touches(a::Polyomino, b::Polyomino, (dr, dc)) =
     any(((r, c),) -> any(((er, ec),) -> (r + dr + er, c + dc + ec) in a, NEIGHBOURS),
         coordinates(b))
