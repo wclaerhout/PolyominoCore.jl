@@ -1,8 +1,8 @@
 """
-Write some logic functions for concatenations.
-- concatenation_possible(p1, p2; side = , pos1, pos2) --> returns if a concatenation is check_valid_concat
-- all_valid_concatenations(p1, p2) --> returns all the possible valid combinations for adding p2 to p1
-- unique_concatenations(p1, p2) --> filters out duplicate concatenations (some concatenations give identical results --> redundant)
+    concatenation_possible(p1, p2; side = "bottom", pos1 = 1, pos2 = 1) -> Bool
+
+True if [`concatenate`](@ref) can attach `p2` to `p1` with these arguments, i.e. the
+result does not overlap and is a valid polyomino.
 """
 
 function concatenation_possible(p1, p2; side = "bottom", pos1 = 1, pos2 = 1)
@@ -17,14 +17,12 @@ end
 """
     all_splits(p) -> Vector{Tuple{Polyomino,Polyomino}}
 
-Reverse reaction (splitting `C -> A + B`): enumerate every way to partition `p`
-into two non-empty connected polyominoes `(A, B)` with `A ∪ B == p`, `A ∩ B == ∅`.
-Each unordered split is returned once.
+Enumerate every way to partition `p` into two non-empty connected polyominoes
+`(A, B)` with `A ∪ B == p`, `A ∩ B == ∅`. Each unordered split is returned once.
 
 Adjacency of `A` and `B` is automatic: `p` is connected, so two connected pieces
-that partition it must touch. Splitting is unrestricted (the general inverse of
-assembly); assembly is the restricted direction (no insertion into an enclosed
-cavity — see `docs/research_framing.md`).
+that partition it must touch. No other restriction applies; for example, a shape
+may be split into a ring and the piece that fills its hole.
 """
 function all_splits(p::Polyomino)
     cells = collect(coordinates(p))
@@ -51,13 +49,9 @@ end
 """
     unique_splits(p) -> Vector{Tuple{Polyomino,Polyomino,Int}}
 
-Collapse `all_splits(p)` to **unique unordered product shape-pairs**, each tagged with its
-**multiplicity** — the number of distinct cuts of `p` that yield that same pair of shapes
-(compared up to translation only, §2 of the research framing).
-
-The shape-pair is the reaction edge `C -> A + B` for the reachability hypergraph (scope A);
-the multiplicity is the **reaction degeneracy** (count of equivalent breakable bonds), a
-rate prefactor for the dynamical CRN (scope B). `sum(m for (_,_,m) in unique_splits(p))`
+Collapse `all_splits(p)` to **unique unordered pairs of shapes**, each tagged with its
+**multiplicity**: the number of distinct cuts of `p` that yield that same pair of shapes
+(compared up to translation by default). `sum(m for (_,_,m) in unique_splits(p))`
 equals `length(all_splits(p))`.
 
 With `symmetry = :rotation` (or `:full`) product shapes are additionally compared up to

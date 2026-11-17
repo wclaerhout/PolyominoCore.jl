@@ -11,6 +11,19 @@ are opt-in through the `symmetry` keyword (`:translation`, `:rotation` or `:full
 [`polyomino_crn`](https://github.com/wclaerhout/polyomino_crn), which builds a
 hypergraph chemical reaction network and quality-diversity search on top of this core.
 
+## Example
+
+```julia
+using Polyominoes
+
+L = poly"""
+#.
+##
+"""                                         # an L-tromino: '#' filled, '.' empty
+length(all_splits(L))                       # 2 ways to cut it into two connected pieces
+unique_splits(L; symmetry = :rotation)      # 1 distinct pair (monomino + domino), multiplicity 2
+```
+
 ## Core Concepts
 
 - **`Polyomino`**: a connected set of grid cells, normalized to a canonical translation.
@@ -19,7 +32,10 @@ hypergraph chemical reaction network and quality-diversity search on top of this
   with helpers to check validity and enumerate valid attachments.
 - **Splitting**: enumerate ways to split a polyomino into connected pieces (`all_splits`,
   `unique_splits`).
-- **Visualization**: plot a single polyomino or a pathway of polyominoes (`CairoMakie`).
+- **Visualization**: plot a single polyomino or a sequence of polyominoes
+  (`visualize_polyomino`, `visualize_pathway`). Plotting is a package extension: it
+  becomes available once a Makie backend is loaded (`using CairoMakie`), so
+  `using Polyominoes` alone does not pull in Makie.
 
 ## Status
 

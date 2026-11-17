@@ -38,7 +38,7 @@ L = poly"""
 @test is_connected(poly"##")
 @test is_connected(Set([(1, 1), (1, 3)])) == false              # detached cells (raw set)
 
-# the constructor itself rejects invalid molecules
+# the constructor itself rejects invalid polyominoes
 @test_throws ErrorException Polyomino(Set([(1, 1), (1, 3)]))    # disconnected
 @test_throws ErrorException Polyomino(Set{Tuple{Int,Int}}())    # empty
 

@@ -8,7 +8,7 @@ p4 = Polyomino(Set([(1,1), (1,2), (1,3)]))
 
 @test concatenation_possible(p3, p4; side = "bottom", pos1 = 2, pos2 = 2) == false
 
-# --- splitting (reverse reaction) ---
+# --- splitting ---
 
 # single cell cannot split
 @test isempty(all_splits(Polyomino(Set([(1, 1)]))))
@@ -31,7 +31,7 @@ end
 # splits are unordered: each counted once (2x2 has 4 L-tromino+monomino + 2 domino+domino = 6)
 @test length(all_splits(sq)) == 6
 
-# the cavity case: full 3x3 splits into ring + centre (reverse legal; assembly is not)
+# the hole case: full 3x3 splits into ring + centre
 full3 = Polyomino(Set([(r, c) for r in 1:3 for c in 1:3]))
 ring  = Set([(r, c) for r in 1:3 for c in 1:3 if (r, c) != (2, 2)])
 @test any(coordinates(a) == coordinates(Polyomino(ring)) && length(coordinates(b)) == 1 ||
