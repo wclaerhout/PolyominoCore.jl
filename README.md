@@ -35,6 +35,8 @@ attachments(L, poly"#"; symmetry = :full)   # the 4 free tetrominoes that contai
 - **Enumeration**: `polyominoes(n; symmetry)` lists every fixed (`:translation`),
   one-sided (`:rotation`) or free (`:full`) polyomino with `n` cells; the counts are
   tested against OEIS A001168, A000988 and A000105 for n = 1…10.
+- **Properties**: `perimeter`, `nholes` and `Polyominoes.symmetry_group` (the
+  symmetries of the square that leave a shape unchanged).
 - **Parsing**: build a `Polyomino` from an ASCII drawing via `parse_polyomino` / `poly"..."`.
 - **Joining**: `attach(a, b, offset)` joins two shapes at an explicit offset;
   `attachments(a, b; symmetry)` lists every distinct shape obtained by placing `b`
