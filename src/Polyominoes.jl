@@ -7,6 +7,7 @@ include("concatenation.jl")
 include("concat_logic.jl")
 include("enumeration.jl")
 include("attach.jl")
+include("properties.jl")
 include("visualisation.jl")
 include("deprecated.jl")
 
@@ -17,12 +18,13 @@ export concatenation_possible, all_valid_concatenations
 export is_connected, all_splits, unique_splits
 export polyominoes
 export attach, attachments
+export perimeter, nholes
 export visualize_polyomino, visualize_pathway
 
 # Symmetry helpers are public but not exported, so they can't clash with names in
 # downstream packages. Use `Polyominoes.rotate90` or `using Polyominoes: rotate90`.
 @static if VERSION >= v"1.11.0-DEV.469"
-    eval(Meta.parse("public rotate90, reflect, orientations, canonical, is_equivalent"))
+    eval(Meta.parse("public rotate90, reflect, orientations, canonical, is_equivalent, symmetry_group"))
 end
 
 end # module Polyominoes

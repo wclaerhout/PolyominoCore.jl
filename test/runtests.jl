@@ -9,6 +9,7 @@ using Aqua
 @testset "Symmetry" include("symmetry_test.jl")
 @testset "Enumeration" include("enumeration_test.jl")
 @testset "Attaching" include("attach_test.jl")
+@testset "Properties" include("properties_test.jl")
 
 @testset "Plotting without Makie" begin
     # the extension must not be loaded before Makie is
