@@ -6,6 +6,7 @@ include("poly_parse.jl")
 include("concatenation.jl")
 include("concat_logic.jl")
 include("enumeration.jl")
+include("attach.jl")
 include("visualisation.jl")
 include("deprecated.jl")
 
@@ -15,6 +16,7 @@ export concatenate
 export concatenation_possible, all_valid_concatenations
 export is_connected, all_splits, unique_splits
 export polyominoes
+export attach, attachments
 export visualize_polyomino, visualize_pathway
 
 # Symmetry helpers are public but not exported, so they can't clash with names in
