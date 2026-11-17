@@ -25,9 +25,9 @@ mono = poly"#"
 @test reflect(reflect(L4)) == L4
 # results stay normalized and keep their cell count
 for q in orientations(L4; symmetry = :full)
-	@test minimum(r for (r, _) in coordinates(q)) == 1
-	@test minimum(c for (_, c) in coordinates(q)) == 1
-	@test n_blocks(q) == 4
+    @test minimum(r for (r, _) in coordinates(q)) == 1
+    @test minimum(c for (_, c) in coordinates(q)) == 1
+    @test n_blocks(q) == 4
 end
 
 # --- orientations ---
@@ -45,7 +45,7 @@ end
 
 @test canonical(L4) === L4                                   # default: identity
 for q in orientations(L4; symmetry = :rotation)
-	@test canonical(q; symmetry = :rotation) == canonical(L4; symmetry = :rotation)
+    @test canonical(q; symmetry = :rotation) == canonical(L4; symmetry = :rotation)
 end
 @test is_equivalent(I3, rotate90(I3); symmetry = :rotation)
 @test !is_equivalent(I3, rotate90(I3))                       # default unchanged: different fixed shapes
@@ -54,9 +54,9 @@ end
 @test  is_equivalent(L4, reflect(L4); symmetry = :full)
 # the 5 free tetrominoes = 7 one-sided = 19 fixed
 tetros = Set(Polyomino(Set(c)) for c in
-	(Set([(1,1),(1,2),(1,3),(1,4)]), Set([(1,1),(1,2),(2,1),(2,2)]),
-	 Set([(1,1),(1,2),(1,3),(2,2)]), Set([(1,1),(1,2),(1,3),(2,1)]),
-	 Set([(1,1),(1,2),(2,2),(2,3)])))
+    (Set([(1,1),(1,2),(1,3),(1,4)]), Set([(1,1),(1,2),(2,1),(2,2)]),
+     Set([(1,1),(1,2),(1,3),(2,2)]), Set([(1,1),(1,2),(1,3),(2,1)]),
+     Set([(1,1),(1,2),(2,2),(2,3)])))
 fixed = Set(q for t in tetros for q in orientations(t; symmetry = :full))
 @test length(fixed) == 19
 @test length(Set(canonical(q; symmetry = :rotation) for q in fixed)) == 7
@@ -68,19 +68,19 @@ fixed = Set(q for t in tetros for q in orientations(t; symmetry = :full))
 # --- defaults are unchanged (regression against the pre-symmetry implementation) ---
 
 function unique_splits_reference(p)
-	KeyT   = Set{Vector{Tuple{Int,Int}}}
-	counts = Dict{KeyT,Int}()
-	reps   = Dict{KeyT,Tuple{Polyomino,Polyomino}}()
-	for (a, b) in all_splits(p)
-		key = Set([coordinates(a), coordinates(b)])
-		if haskey(counts, key)
-			counts[key] += 1
-		else
-			counts[key] = 1
-			reps[key]   = (a, b)
-		end
-	end
-	[(reps[k][1], reps[k][2], counts[k]) for k in keys(counts)]
+    KeyT   = Set{Vector{Tuple{Int,Int}}}
+    counts = Dict{KeyT,Int}()
+    reps   = Dict{KeyT,Tuple{Polyomino,Polyomino}}()
+    for (a, b) in all_splits(p)
+        key = Set([coordinates(a), coordinates(b)])
+        if haskey(counts, key)
+            counts[key] += 1
+        else
+            counts[key] = 1
+            reps[key]   = (a, b)
+        end
+    end
+    [(reps[k][1], reps[k][2], counts[k]) for k in keys(counts)]
 end
 
 shapes = (mono, I3, sq, L4, T4, poly"""
@@ -89,11 +89,11 @@ shapes = (mono, I3, sq, L4, T4, poly"""
 ###
 """)
 for p in shapes
-	@test unique_splits(p) == unique_splits_reference(p)
-	@test unique_splits(p; symmetry = :translation) == unique_splits_reference(p)
-	for q in shapes
-		@test all_valid_concatenations(p, q) isa Vector{BitMatrix}
-	end
+    @test unique_splits(p) == unique_splits_reference(p)
+    @test unique_splits(p; symmetry = :translation) == unique_splits_reference(p)
+    for q in shapes
+        @test all_valid_concatenations(p, q) isa Vector{BitMatrix}
+    end
 end
 
 # --- unique_splits with symmetry ---
@@ -104,7 +104,7 @@ us_rot = unique_splits(sq; symmetry = :rotation)
 @test length(us_rot) == 2                                    # {L3, mono} ×4 and {I2, I2} ×2
 @test sort([m for (_, _, m) in us_rot]) == [2, 4]
 for p in shapes, sym in (:rotation, :full)
-	@test sum((m for (_, _, m) in unique_splits(p; symmetry = sym)); init = 0) == length(all_splits(p))
+    @test sum((m for (_, _, m) in unique_splits(p; symmetry = sym)); init = 0) == length(all_splits(p))
 end
 
 # --- all_valid_concatenations with symmetry ---

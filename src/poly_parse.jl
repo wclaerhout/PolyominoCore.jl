@@ -1,5 +1,5 @@
 """
-	parse_polyomino(s) -> Polyomino
+    parse_polyomino(s) -> Polyomino
 
 Build a `Polyomino` from an ASCII drawing. Exactly two grid characters:
 
@@ -19,31 +19,31 @@ parse_polyomino(\"\"\"
 ```
 """
 function parse_polyomino(s::AbstractString)
-	rows = String[]
-	for line in split(s, '\n')
-		stripped = filter(!isspace, line)        # whitespace is never significant
-		isempty(stripped) || push!(rows, stripped)
-	end
-	isempty(rows) && error("parse_polyomino: empty drawing")
+    rows = String[]
+    for line in split(s, '\n')
+        stripped = filter(!isspace, line)        # whitespace is never significant
+        isempty(stripped) || push!(rows, stripped)
+    end
+    isempty(rows) && error("parse_polyomino: empty drawing")
 
-	n = length(rows)
-	coords = Set{Tuple{Int,Int}}()
-	for (i, row) in enumerate(rows)
-		r = n - i + 1                            # top line => largest row, draws on top
-		for (c, ch) in enumerate(row)
-			if ch == '#'
-				push!(coords, (r, c))
-			elseif ch != '.'
-				error("parse_polyomino: unexpected character '$ch' (use '#' filled, '.' empty)")
-			end
-		end
-	end
-	isempty(coords) && error("parse_polyomino: drawing has no filled cells")
-	Polyomino(coords)   # constructor rejects disconnected cells
+    n = length(rows)
+    coords = Set{Tuple{Int,Int}}()
+    for (i, row) in enumerate(rows)
+        r = n - i + 1                            # top line => largest row, draws on top
+        for (c, ch) in enumerate(row)
+            if ch == '#'
+                push!(coords, (r, c))
+            elseif ch != '.'
+                error("parse_polyomino: unexpected character '$ch' (use '#' filled, '.' empty)")
+            end
+        end
+    end
+    isempty(coords) && error("parse_polyomino: drawing has no filled cells")
+    Polyomino(coords)   # constructor rejects disconnected cells
 end
 
 """
-	poly"..." -> Polyomino
+    poly"..." -> Polyomino
 
 String-macro sugar for [`parse_polyomino`](@ref). Use triple quotes for multi-row shapes:
 
@@ -55,5 +55,5 @@ t = poly\"\"\"
 ```
 """
 macro poly_str(s)
-	:(parse_polyomino($s))
+    :(parse_polyomino($s))
 end

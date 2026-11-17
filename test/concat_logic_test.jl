@@ -22,10 +22,10 @@ sp = all_splits(dom)
 # every split partitions all cells into two connected, disjoint, non-empty pieces
 sq = Polyomino(Set([(1, 1), (1, 2), (2, 1), (2, 2)]))   # 2x2
 for (a, b) in all_splits(sq)
-	ca, cb = coordinates(a), coordinates(b)
-	@test !isempty(ca) && !isempty(cb)
-	@test length(ca) + length(cb) == 4       # pieces partition all cells (mass conserved)
-	@test is_connected(ca) && is_connected(cb)
+    ca, cb = coordinates(a), coordinates(b)
+    @test !isempty(ca) && !isempty(cb)
+    @test length(ca) + length(cb) == 4       # pieces partition all cells (mass conserved)
+    @test is_connected(ca) && is_connected(cb)
 end
 
 # splits are unordered: each counted once (2x2 has 4 L-tromino+monomino + 2 domino+domino = 6)
@@ -48,7 +48,7 @@ us = unique_splits(tri)
 
 # multiplicities always sum back to the raw split count
 for poly in (dom, sq, tri, full3)
-	@test sum(m for (_, _, m) in unique_splits(poly)) == length(all_splits(poly))
+    @test sum(m for (_, _, m) in unique_splits(poly)) == length(all_splits(poly))
 end
 
 # 2x2 has no translation-equivalent product pairs: 6 raw splits, 6 unique, all multiplicity 1
