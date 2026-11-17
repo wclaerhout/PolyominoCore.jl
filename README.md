@@ -40,9 +40,7 @@ attachments(L, poly"#"; symmetry = :full)   # the 4 free tetrominoes that contai
 - **Parsing**: build a `Polyomino` from an ASCII drawing via `parse_polyomino` / `poly"..."`.
 - **Joining**: `attach(a, b, offset)` joins two shapes at an explicit offset;
   `attachments(a, b; symmetry)` lists every distinct shape obtained by placing `b`
-  (in any orientation `symmetry` allows) edge-to-edge with `a`. The older `side`/`pos`
-  functions (`concatenate`, `concatenation_possible`, `all_valid_concatenations`) are
-  deprecated and will be removed in v0.2.
+  (in any orientation `symmetry` allows) edge-to-edge with `a`.
 - **Splitting**: enumerate ways to split a polyomino into connected pieces (`all_splits`,
   `unique_splits`).
 - **Visualization**: plot a single polyomino or a sequence of polyominoes

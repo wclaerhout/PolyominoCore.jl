@@ -19,6 +19,7 @@ L = poly"""
 @test L != poly"##"
 @test length(Set([L, Polyomino([(0, 0), (0, 1), (1, 0)]), poly"##"])) == 2
 @test_throws MethodError Polyomino(Set([(1, 1)]), UInt(0))              # no default constructor
+@test_throws MethodError Polyomino("not a polyomino")
 
 # --- collection interface ---
 
@@ -45,9 +46,3 @@ for p in (L, poly"###", p1, poly"""
     drawing = join(split(sprint(show, MIME"text/plain"(), p), '\n')[2:end], '\n')
     @test parse_polyomino(drawing) == p
 end
-
-# --- deprecated accessors still work ---
-
-@test (@test_deprecated n_blocks(L)) == 3
-@test (@test_deprecated poly_height(p1)) == 3
-@test (@test_deprecated poly_width(p1)) == 1

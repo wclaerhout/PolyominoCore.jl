@@ -1,26 +1,4 @@
 """
-    concatenation_possible(p1, p2; side = :bottom, pos1 = 1, pos2 = 1) -> Bool
-
-True if [`concatenate`](@ref) can attach `p2` to `p1` with these arguments: both
-positions are in range and the placement does not overlap. `side` may be a `Symbol`
-or a string; an unknown side throws an `ArgumentError`.
-
-!!! warning "Deprecated"
-    Will be removed in v0.2. Use [`attachments`](@ref) to list every way to join two
-    shapes.
-"""
-function concatenation_possible(p1::Polyomino, p2::Polyomino;
-                                side = :bottom, pos1::Int = 1, pos2::Int = 1)
-    depwarn_joining(:concatenation_possible)
-    _concatenation_possible(p1, p2, Symbol(side), pos1, pos2)
-end
-
-function _concatenation_possible(p1::Polyomino, p2::Polyomino, side::Symbol, pos1::Int, pos2::Int)
-    offset = attach_offset(p1, p2, side, pos1, pos2)
-    offset !== nothing && !overlaps(p1, p2, offset)
-end
-
-"""
     all_splits(p) -> Vector{Tuple{Polyomino,Polyomino}}
 
 Enumerate every way to partition `p` into two non-empty connected polyominoes
@@ -107,58 +85,4 @@ function unique_splits(p::Polyomino; symmetry::Symbol = :translation)
         end
     end
     out
-end
-
-"""
-    all_valid_concatenations(p1, p2; symmetry = :translation)
-
-output: vector of size 4 (bottom, top, left, right)
-        - every side (bottom, top,...) contains a matrix of size(poly1, poly2) with 0/false or 1/true
-        - so if bottom[1,2] = 1 this means that you can attach the second block of polyomino 2 to the first block of polyomino 1 --> valid concatenation
-        - rows = pos1, cols = pos2
-
-With `symmetry = :rotation` (or `:full`) `p2` may also be rotated (and reflected) before
-attaching. The output is then a `Vector` of `orientation => matrices` pairs, one per
-distinct orientation of `p2` (see `Polyominoes.orientations`), where `matrices` is the
-4-vector above for that orientation. Pass the orientation as `p2` to `concatenate`.
-
-!!! warning "Deprecated"
-    Will be removed in v0.2. Use [`attachments`](@ref), which returns the distinct
-    joined shapes directly (pass `placements = true` to also get the offsets).
-"""
-function all_valid_concatenations(p1::Polyomino, p2::Polyomino; symmetry::Symbol = :translation)
-    depwarn_joining(:all_valid_concatenations)
-    check_symmetry(symmetry)
-    symmetry == :translation && return _all_valid_concatenations(p1, p2)
-    [q => _all_valid_concatenations(p1, q) for q in orientations(p2; symmetry)]
-end
-
-function _all_valid_concatenations(p1::Polyomino, p2::Polyomino)
-
-    sides = ["bottom", "top", "left", "right"]
-    pos1_height, pos1_width = size(p1)
-    pos2_height, pos2_width = size(p2)
-
-    matrix_tab = Dict("bottom" => 1, "top" => 2, "left" => 3, "right" => 4)
-
-    validation_matrix = [trues(pos1_width, pos2_width), trues(pos1_width, pos2_width),
-                         trues(pos1_height, pos2_height), trues(pos1_height, pos2_height)]
-
-    for side in sides
-        tab = matrix_tab[side]
-        if side == "bottom" || side == "top"
-            positions1 = pos1_width
-            positions2 = pos2_width
-        else
-            positions1 = pos1_height
-            positions2 = pos2_height
-        end
-        for pos1 in 1:positions1
-            for pos2 in 1:positions2
-                validation_matrix[tab][pos1, pos2] = _concatenation_possible(p1, p2, Symbol(side), pos1, pos2)
-            end
-        end
-    end
-
-    return validation_matrix
 end

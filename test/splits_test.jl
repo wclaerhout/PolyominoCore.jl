@@ -1,12 +1,6 @@
 p1 = Polyomino(Set([(1, 1), (1,2), (2,1)]))
-p2 = concatenate(p1, p1; side =:bottom, pos1 = 1, pos2 = 1)
-
-@test concatenation_possible(p1, p1; side ="bottom", pos1 = 1, pos2 = 1) == true
-
 p3 = Polyomino(Set([(1,1), (2,1), (2,2)]))
 p4 = Polyomino(Set([(1,1), (1,2), (1,3)]))
-
-@test concatenation_possible(p3, p4; side = "bottom", pos1 = 2, pos2 = 2) == false
 
 # --- splitting ---
 
@@ -54,32 +48,6 @@ end
 # 2x2 has no translation-equivalent product pairs: 6 raw splits, 6 unique, all multiplicity 1
 @test length(unique_splits(sq)) == 6
 @test all(m == 1 for (_, _, m) in unique_splits(sq))
-# --- concatenation_possible: no try/catch ---
-
-@test concatenation_possible(p1, p1; side = :bottom) == concatenation_possible(p1, p1; side = "bottom")
-@test concatenation_possible(p1, p1; side = :bottom, pos1 = 99) == false     # out of range
-@test concatenation_possible(p1, p1; side = :bottom, pos2 = 0) == false
-@test_throws ArgumentError concatenation_possible(p1, p1; side = :diagonal)  # caller bug surfaces
-@test_throws ArgumentError concatenate(p1, p1; side = :diagonal)
-@test_throws ErrorException concatenate(p1, p1; side = :bottom, pos1 = 99)
-# agrees with whether `concatenate` succeeds, for every side and position
-for a in (p1, p3, p4, poly"""
-    ###
-    #.#
-    """), b in (p1, p3, p4), side in (:top, :bottom, :left, :right)
-    n1 = length(Polyominoes.boundary_cells(a, side))
-    n2 = length(Polyominoes.boundary_cells(b, Polyominoes.opposite_side(side)))
-    for i in 0:n1 + 1, j in 0:n2 + 1
-        ok = try
-            concatenate(a, b; side, pos1 = i, pos2 = j); true
-        catch e
-            e isa ErrorException || rethrow()
-            false
-        end
-        @test concatenation_possible(a, b; side, pos1 = i, pos2 = j) == ok
-    end
-end
-
 # --- all_splits matches a naive subset enumeration ---
 
 # every partition into two connected parts, each unordered pair once (cell 1 is in A),
