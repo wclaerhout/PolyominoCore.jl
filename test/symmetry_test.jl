@@ -89,8 +89,9 @@ shapes = (mono, I3, sq, L4, T4, poly"""
 ###
 """)
 for p in shapes
-    @test unique_splits(p) == unique_splits_reference(p)
-    @test unique_splits(p; symmetry = :translation) == unique_splits_reference(p)
+    # same pairs and multiplicities; the order is first-seen (the reference's is Dict order)
+    @test Set(unique_splits(p)) == Set(unique_splits_reference(p))
+    @test Set(unique_splits(p; symmetry = :translation)) == Set(unique_splits_reference(p))
     for q in shapes
         @test all_valid_concatenations(p, q) isa Vector{BitMatrix}
     end

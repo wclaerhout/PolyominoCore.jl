@@ -20,13 +20,16 @@ L = poly"""
 #.
 ##
 """                                         # an L-tromino: '#' filled, '.' empty
+length(L), size(L)                          # 3 cells, 2×2 bounding box; (1, 1) in L == true
 length(all_splits(L))                       # 2 ways to cut it into two connected pieces
 unique_splits(L; symmetry = :rotation)      # 1 distinct pair (monomino + domino), multiplicity 2
 ```
 
 ## Core Concepts
 
-- **`Polyomino`**: a connected set of grid cells, normalized to a canonical translation.
+- **`Polyomino`**: a connected set of grid cells `(r, c)` (rows grow upward), normalized
+  to a canonical translation. Behaves like a read-only set of cells: `length`, `size`
+  (bounding box), `in` and iteration. Printing one shows its `#`/`.` drawing.
 - **Parsing**: build a `Polyomino` from an ASCII drawing via `parse_polyomino` / `poly"..."`.
 - **Concatenation**: attach one polyomino to another along a side (`concatenate`),
   with helpers to check validity and enumerate valid attachments.
