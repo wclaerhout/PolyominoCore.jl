@@ -70,7 +70,7 @@ These need a Makie backend, for example `using CairoMakie`.
 
 ```@docs
 visualize_polyomino
-visualize_pathway
+visualize_polyominoes
 ```
 
 ## Index

@@ -1,6 +1,6 @@
 name = "Polyominoes"
 uuid = "741bb4a1-64da-4b98-a1f2-8358f6fa25db"
-version = "0.2.0-DEV"
+version = "0.2.0"
 
 [weakdeps]
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
