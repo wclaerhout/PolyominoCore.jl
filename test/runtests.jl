@@ -1,6 +1,7 @@
 using Polyominoes
 using Test
 using Aqua
+using JET
 
 @testset "Basic type functions testing" include("type_test.jl")
 @testset "Polyomino parsing" include("poly_parse_test.jl")
@@ -19,3 +20,9 @@ end
 @testset "Plotting (Makie extension)" include("visualisation_test.jl")
 
 @testset "Aqua" Aqua.test_all(Polyominoes)
+
+# JET's results depend on the compiler, so each JET release supports only certain Julia
+# versions. Run it on current Julia only; older versions just install an older JET.
+if VERSION >= v"1.12"
+    @testset "JET" JET.test_package(Polyominoes; target_modules = (Polyominoes,))
+end
