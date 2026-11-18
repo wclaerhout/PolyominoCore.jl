@@ -11,16 +11,17 @@ Requires a Makie backend, e.g. `using CairoMakie`.
 function visualize_polyomino end
 
 """
-    visualize_pathway(ps::AbstractVector{Polyomino}) -> Makie.Figure
+    visualize_polyominoes(ps::AbstractVector{Polyomino}; ncols = 2) -> Makie.Figure
 
-Draw a sequence of polyominoes in a two-column grid on shared axis limits, one panel
-per step, oriented like [`visualize_polyomino`](@ref).
+Draw several polyominoes in a grid with `ncols` columns, one panel per shape (titled by
+its index), all on shared axis limits so sizes are comparable. Shapes are oriented like
+[`visualize_polyomino`](@ref).
 Requires a Makie backend, e.g. `using CairoMakie`.
 """
-function visualize_pathway end
+function visualize_polyominoes end
 
 function _plotting_hint(io, exc, argtypes, kwargs)
-    if exc.f in (visualize_polyomino, visualize_pathway) &&
+    if exc.f in (visualize_polyomino, visualize_polyominoes) &&
        isempty(methods(exc.f))
         print(io, "\n$(nameof(exc.f)) needs a Makie backend; run `using CairoMakie` ",
               "(or GLMakie/WGLMakie) first.")

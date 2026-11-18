@@ -20,8 +20,18 @@ ax = only(axes_of(f))
 @test !ax.yreversed[]
 @test drawn_rects(ax) == expected_rects
 
-f = visualize_pathway([p, poly"##"])
+f = visualize_polyominoes([p, poly"##"])
 axs = axes_of(f)
 @test length(axs) == 2
 @test all(!a.yreversed[] for a in axs)
 @test drawn_rects(axs[1]) == expected_rects
+
+# `ncols` sets the grid shape; titles are the indices.
+f = visualize_polyominoes([p, poly"##", poly"#"]; ncols = 3)
+axs = axes_of(f)
+@test length(axs) == 3
+@test [a.title[] for a in axs] == ["1", "2", "3"]
+@test size(f.layout) == (1, 3)
+@test size(visualize_polyominoes([p, p, p]).layout) == (2, 2)
+@test_throws ArgumentError visualize_polyominoes(Polyomino[])
+@test_throws ArgumentError visualize_polyominoes([p]; ncols = 0)

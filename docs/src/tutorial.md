@@ -175,7 +175,7 @@ offset used for each result.
 ## Plotting
 
 Plotting needs a Makie backend. Once one is loaded, `visualize_polyomino` and
-`visualize_pathway` become available. The picture is oriented like the ASCII drawing.
+`visualize_polyominoes` become available. The picture is oriented like the ASCII drawing.
 
 ```@example tut
 using CairoMakie
@@ -188,5 +188,5 @@ visualize_polyomino(poly"""
 ```
 
 ```@example tut
-visualize_pathway([poly"#", poly"##", L, T])
+visualize_polyominoes([poly"#", poly"##", L, T])
 ```

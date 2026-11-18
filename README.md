@@ -49,7 +49,7 @@ using CairoMakie; visualize_polyomino(L)     # plotting loads with a Makie backe
 | Structure | `is_connected`, `perimeter`, `nholes` |
 | Splitting | `all_splits`, `unique_splits(p; symmetry)` |
 | Joining | `attach(a, b, offset)`, `attachments(a, b; symmetry)` |
-| Plotting (with Makie) | `visualize_polyomino`, `visualize_pathway` |
+| Plotting (with Makie) | `visualize_polyomino`, `visualize_polyominoes` |
 
 See the [documentation](https://wclaerhout.github.io/Polyominoes.jl/dev/) for a tutorial
 and the full API.

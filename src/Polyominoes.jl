@@ -15,7 +15,7 @@ export is_connected, all_splits, unique_splits
 export polyominoes
 export attach, attachments
 export perimeter, nholes
-export visualize_polyomino, visualize_pathway
+export visualize_polyomino, visualize_polyominoes
 
 # Symmetry helpers are public but not exported, so they can't clash with names in
 # downstream packages. Use `Polyominoes.rotate90` or `using Polyominoes: rotate90`.
