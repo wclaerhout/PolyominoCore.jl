@@ -1,17 +1,46 @@
 const NEIGHBOURS = ((1, 0), (-1, 0), (0, 1), (0, -1))
 
 # Does `b` shifted by `(dr, dc)` overlap `a`?
-overlaps(a::Polyomino, b::Polyomino, (dr, dc)) =
-    any(((r, c),) -> (r + dr, c + dc) in a, coordinates(b))
+function overlaps(a::Polyomino, b::Polyomino, (dr, dc))
+    for (r, c) in coordinates(b)
+        shifted_cell = (r + dr, c + dc)
 
-touches(a::Polyomino, b::Polyomino, (dr, dc)) =
-    any(((r, c),) -> any(((er, ec),) -> (r + dr + er, c + dc + ec) in a, NEIGHBOURS),
-        coordinates(b))
+        if shifted_cell in a
+            return true
+        end
+    end
 
-# Union of `a` and `b` shifted by `offset`; caller guarantees no overlap and contact.
-join_unchecked(a::Polyomino, b::Polyomino, (dr, dc)) =
-    _polyomino_unchecked([coordinates(a); [(r + dr, c + dc) for (r, c) in coordinates(b)]])
+    return false
+end
 
+function touches(a::Polyomino, b::Polyomino, (dr, dc))
+    for (r, c) in coordinates(b)
+        shifted_r = r + dr
+        shifted_c = c + dc
+
+        for (er, ec) in NEIGHBOURS
+            neighbour = (shifted_r + er, shifted_c + ec)
+
+            if neighbour in a
+                return true
+            end
+        end
+    end
+
+    return false
+end
+
+# Union of `a` and `b` shifted by `offset`.
+# Caller guarantees no overlap and contact.
+function join_unchecked(a::Polyomino, b::Polyomino, (dr, dc))
+    cells = copy(coordinates(a))
+
+    for (r, c) in coordinates(b)
+        push!(cells, (r + dr, c + dc))
+    end
+
+    return _polyomino_unchecked(cells)
+end
 """
     attach(a, b, offset) -> Polyomino
 
@@ -50,30 +79,71 @@ With `placements = true`, returns `(shape, piece, offset)` named tuples instead,
 Every result can be split back into `a` and `b`: `all_splits(shape)` contains the pair
 (up to translation, and up to `symmetry` for the `b` piece).
 """
-function attachments(a::Polyomino, b::Polyomino; symmetry::Symbol = :translation,
+function attachments(a::Polyomino, b::Polyomino;
+                     symmetry::Symbol = :translation,
                      placements::Bool = false)
+
     check_symmetry(symmetry)
+
     seen = Set{Polyomino}()
-    out  = @NamedTuple{shape::Polyomino, piece::Polyomino, offset::Tuple{Int,Int}}[]
-    for q in orientations(b; symmetry)
+    out = @NamedTuple{
+        shape::Polyomino,
+        piece::Polyomino,
+        offset::Tuple{Int,Int}
+    }[]
+
+    # Try every allowed orientation of b.
+    for piece in orientations(b; symmetry)
+
         offsets = Set{Tuple{Int,Int}}()
-        # some cell z of q must land on an empty neighbour y of a: offset = y - z
-        for (r, c) in coordinates(a), (er, ec) in NEIGHBOURS
-            y = (r + er, c + ec)
-            y in a && continue
-            for z in coordinates(q)
-                push!(offsets, (y[1] - z[1], y[2] - z[2]))
+
+        # 1. Find all empty cells directly neighbouring a 
+        # 2. Calculate all the translations for b that would touch a
+        # 3. No duplicate translations -> Set()
+        # 4. Check if you translate b by the offset if it overlaps a -> reject if they do 
+        # 5. Construct the attachment 
+        # 6. Remove symmetric duplicates
+        
+        for (r, c) in coordinates(a)
+            for (dr, dc) in NEIGHBOURS
+                neighbour = (r + dr, c + dc)
+
+                # Skip positions already occupied by a.
+                neighbour in a && continue
+
+                # Align every cell of piece with this empty neighbour.
+                for (pr, pc) in coordinates(piece)
+                    offset = (neighbour[1] - pr, neighbour[2] - pc)
+                    push!(offsets, offset)
+                end
             end
         end
-        for off in sort!(collect(offsets))
-            overlaps(a, q, off) && continue
-            shape = join_unchecked(a, q, off)
+
+        # Evaluate candidate placements. Test if the pieces touch or overlap.
+        for offset in sort!(collect(offsets))
+
+            # Reject placements that overlap a.
+            overlaps(a, piece, offset) && continue
+
+            # Construct the combined polyomino.
+            shape = join_unchecked(a, piece, offset)
+
+            # Avoid shapes equivalent under the requested symmetry.
             key = canonical(shape; symmetry)
             key in seen && continue
+
             push!(seen, key)
-            push!(out, (shape = shape, piece = q, offset = off))
+
+            push!(out, (
+                shape = shape,
+                piece = piece,
+                offset = offset
+            ))
         end
     end
+
+    # Sort results by their coordinates.
     sort!(out; by = x -> coordinates(x.shape))
-    placements ? out : [x.shape for x in out]
+
+    return placements ? out : [x.shape for x in out]
 end

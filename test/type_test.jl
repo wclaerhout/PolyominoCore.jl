@@ -21,6 +21,8 @@ L = poly"""
 @test_throws MethodError Polyomino(Set([(1, 1)]), UInt(0))              # no default constructor
 @test_throws MethodError Polyomino("not a polyomino")
 
+@test_throws ArgumentError p = Polyomino([(1,1), (2, 2)])                     # unconnected polyomino
+
 # --- collection interface ---
 
 @test length(L) == 3

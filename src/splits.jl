@@ -15,12 +15,23 @@ function all_splits(p::Polyomino)
     n < 2 && return out
     n <= 63 || throw(ArgumentError("all_splits: polyomino too large ($n cells; max 63)"))
 
-    # cell i <-> bit i-1; nbrs[i] = bitmask of the edge-neighbours of cell i
-    nbrs = [reduce(|, (UInt64(1) << (j - 1) for j in 1:n if abs(r - cells[j][1]) + abs(c - cells[j][2]) == 1);
-                   init = UInt64(0)) for (r, c) in cells]
+    # Map coordinates to their corresponding bit positions.
+    index = Dict(cell => i for (i, cell) in enumerate(cells))
+
+    # Build adjacency bitmasks.
+    nbrs = zeros(UInt64, n)
+
+    for (i, (r, c)) in enumerate(cells)
+        for nb in ((r + 1, c), (r - 1, c), (r, c + 1), (r, c - 1))
+            j = get(index, nb, 0)
+            if j != 0
+                nbrs[i] |= UInt64(1) << (j - 1) # representing neigbours as bitmasks
+            end
+        end
+    end
     full = (UInt64(1) << n) - 1
 
-    # cell 1 is pinned into A so each unordered split is counted once
+    # cell 1 is pinned into A so each unordered split is counted once (otherwise we would count (A, B) and (B, A))
     for mask in UInt64(0):((UInt64(1) << (n - 1)) - 1)
         A = UInt64(1) | (mask << 1)
         A == full && continue                   # B would be empty

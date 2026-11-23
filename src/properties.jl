@@ -3,6 +3,8 @@
 
 Number of unit edges on the boundary of `p`, including the edges around holes:
 `4·length(p) − 2·(number of edge-adjacent cell pairs)`.
+Every cell initially contributes 4 cells to the perimeter, but for each pair that is formed
+2 edges are substracted.
 
 ```julia
 perimeter(poly"##") == 6

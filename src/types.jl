@@ -21,7 +21,7 @@ function is_connected(cells)
             end
         end
     end
-    length(seen) == length(cellset)
+    return length(seen) == length(cellset)     # every block has a horizontal/vertical neighbour
 end
 
 """
@@ -51,16 +51,28 @@ struct Polyomino
             cells .= ((r - min_r + 1, c - min_c + 1) for (r, c) in cells)
         end
         sort!(cells)
-        new(cells, hash(cells, 0x5f6c2b3a9d1e4f87 % UInt))
+        new(cells, hash(cells, 0x5f6c2b3a9d1e4f87 % UInt)) # calculating the hash of a polyomino only once
     end
 end
 
 function Polyomino(cells)
-    v = unique!(sort!(Tuple{Int,Int}[convert(Tuple{Int,Int}, x) for x in cells]))
+    # Convert input to a vector of integer coordinate tuples.
+    v = Tuple{Int,Int}[]
+    for cell in cells
+        push!(v, convert(Tuple{Int,Int}, cell))
+    end
+
+    # Remove duplicate cells and sort coordinates.
+    sort!(unique!(v))
+
+    # Validate the shape.
     isempty(v) && error("Polyomino: needs at least one cell")
-    is_connected(v) ||
-        error("Polyomino: cells are not connected — not a valid polyomino ($v)")
-    _polyomino_unchecked(v)
+
+    if !is_connected(v)
+        throw(ArgumentError("Polyomino: cells are not connected"))
+    end
+
+    return _polyomino_unchecked(v)
 end
 
 Base.:(==)(p::Polyomino, q::Polyomino) = p.hash == q.hash && p.coordinates == q.coordinates
@@ -96,7 +108,11 @@ Base.length(p::Polyomino) = length(p.coordinates)
 
 Size of the bounding box: number of rows and number of columns.
 """
-Base.size(p::Polyomino) = (last(p.coordinates)[1], maximum(last, p.coordinates))
+function Base.size(p::Polyomino)
+    height = last(p.coordinates)[1]
+    width  = maximum(last, p.coordinates)
+    return (height, width)
+end
 Base.size(p::Polyomino, d::Integer) = size(p)[d]
 
 """

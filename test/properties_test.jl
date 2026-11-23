@@ -12,7 +12,7 @@ two_holes = poly"""
 ##.#
 .###
 """
-# an empty cell touching the outside only at a corner is still a hole
+# only the enclosed hole should be counted
 notch = poly"""
 ##.
 #.#
