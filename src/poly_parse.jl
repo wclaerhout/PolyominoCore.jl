@@ -24,7 +24,7 @@ function parse_polyomino(s::AbstractString)
         stripped = filter(!isspace, line)        # whitespace is never significant
         isempty(stripped) || push!(rows, stripped)
     end
-    isempty(rows) && error("parse_polyomino: empty drawing")
+    isempty(rows) && throw(ArgumentError("parse_polyomino: empty drawing"))
 
     n = length(rows)
     coords = Set{Tuple{Int,Int}}()
@@ -34,11 +34,11 @@ function parse_polyomino(s::AbstractString)
             if ch == '#'
                 push!(coords, (r, c))
             elseif ch != '.'
-                error("parse_polyomino: unexpected character '$ch' (use '#' filled, '.' empty)")
+                throw(ArgumentError("parse_polyomino: unexpected character '$ch' (use '#' filled, '.' empty)"))
             end
         end
     end
-    isempty(coords) && error("parse_polyomino: drawing has no filled cells")
+    isempty(coords) && throw(ArgumentError("parse_polyomino: drawing has no filled cells"))
     Polyomino(coords)   # constructor rejects disconnected cells
 end
 

@@ -41,5 +41,5 @@ end
 @testset "argument checks" begin
     @test_throws ArgumentError polyominoes(0)
     @test_throws ArgumentError polyominoes(-3)
-    @test_throws ErrorException polyominoes(3; symmetry = :bogus)       # check_symmetry
+    @test_throws ArgumentError polyominoes(3; symmetry = :bogus)       # check_symmetry
 end

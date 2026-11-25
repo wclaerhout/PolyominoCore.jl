@@ -11,7 +11,7 @@ explicitly through a `symmetry` keyword:
 const SYMMETRIES = (:translation, :rotation, :full)
 
 check_symmetry(symmetry::Symbol) = symmetry in SYMMETRIES ||
-    error("symmetry must be one of $SYMMETRIES, got :$symmetry")
+    throw(ArgumentError("symmetry must be one of $SYMMETRIES, got :$symmetry"))
 
 """
     rotate90(p) -> Polyomino

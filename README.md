@@ -51,7 +51,7 @@ using CairoMakie; visualize_polyomino(L)     # plotting loads with a Makie backe
 | Joining | `attach(a, b, offset)`, `attachments(a, b; symmetry)` |
 | Plotting (with Makie) | `visualize_polyomino`, `visualize_polyominoes` |
 
-See the [documentation](https://wclaerhout.github.io/Polyominoes.jl/dev/) for a tutorial
+See the [documentation](https://wclaerhout.github.io/Polyominoes.jl/dev/) for tutorials
 and the full API.
 
 ## How it differs from Polyomino.jl
@@ -62,8 +62,7 @@ and minimal line covers. Polyominoes.jl does none of that. It is a general core 
 shapes themselves: representation, symmetry, exhaustive enumeration, splitting and
 joining.
 
-## Origin
+## Use of AI
 
-Extracted from [`polyomino_crn`](https://github.com/wclaerhout/polyomino_crn), research
-code that builds a chemical reaction network and quality-diversity search on top of
-this core. Nothing in this package depends on that context.
+This code was written with the help of generative AI. The author has reviewed all of
+it manually and is responsible for it.
