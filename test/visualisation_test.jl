@@ -35,3 +35,29 @@ axs = axes_of(f)
 @test size(visualize_polyominoes([p, p, p]).layout) == (2, 2)
 @test_throws ArgumentError visualize_polyominoes(Polyomino[])
 @test_throws ArgumentError visualize_polyominoes([p]; ncols = 0)
+
+# `annotation`: :none draws only the shape, :grid adds the cell lattice of the bounding
+# box, :full also labels the axes with row and column numbers at the cell centres.
+lattices(ax) = [plt for plt in ax.scene.plots if plt isa Makie.LineSegments]
+
+ax = only(axes_of(visualize_polyomino(p)))
+@test isempty(lattices(ax))
+@test !ax.xticklabelsvisible[]
+
+ax = only(axes_of(visualize_polyomino(p; annotation = :grid)))
+@test length(only(lattices(ax))[1][]) == 2 * (3 + 3)   # 3 vertical + 3 horizontal lines
+@test !ax.xticklabelsvisible[]
+@test drawn_rects(ax) == expected_rects
+
+ax = only(axes_of(visualize_polyomino(p; annotation = :full)))
+@test length(lattices(ax)) == 1
+@test ax.xticklabelsvisible[] && ax.yticklabelsvisible[]
+@test ax.xticks[] == (0.5:1:2, ["1", "2"])
+@test ax.yticks[] == (0.5:1:2, ["1", "2"])
+
+axs = axes_of(visualize_polyominoes([p, poly"###"]; annotation = :grid))
+@test all(a -> length(only(lattices(a))[1][]) == 2 * (4 + 3), axs)   # shared 2 × 3 box
+@test [a.title[] for a in axs] == ["1", "2"]
+
+@test_throws ArgumentError visualize_polyomino(p; annotation = :axes)
+@test_throws ArgumentError visualize_polyominoes([p]; annotation = :axes)
