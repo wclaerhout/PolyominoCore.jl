@@ -51,7 +51,7 @@ for sym in (:translation, :rotation, :full)
     @test all(any(q == x.piece for q in orientations(L3; symmetry = sym)) for x in ps)
 end
 
-@test_throws ErrorException attachments(dom, mono; symmetry = :bogus)
+@test_throws ArgumentError attachments(dom, mono; symmetry = :bogus)
 
 # --- property tests ---
 

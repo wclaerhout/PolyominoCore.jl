@@ -66,7 +66,7 @@ function Polyomino(cells)
     sort!(unique!(v))
 
     # Validate the shape.
-    isempty(v) && error("Polyomino: needs at least one cell")
+    isempty(v) && throw(ArgumentError("Polyomino: needs at least one cell"))
 
     if !is_connected(v)
         throw(ArgumentError("Polyomino: cells are not connected"))
@@ -89,8 +89,9 @@ coordinates(p::Polyomino) = p.coordinates
 """
     is_connected(p::Polyomino) -> Bool
 
-Always `true` for a constructed `Polyomino` (the constructor enforces it); provided for
-explicit validity checks on cell collections via the generic method.
+Always `true`: the `Polyomino` constructor rejects cells that are not edge-connected, so
+every `Polyomino` is connected. This method exists so `is_connected` works on both
+polyominoes and plain cell collections (see the generic method).
 """
 is_connected(p::Polyomino) = true
 
@@ -118,7 +119,15 @@ Base.size(p::Polyomino, d::Integer) = size(p)[d]
 """
     cell in p
 
-True if the cell `(r, c)` belongs to `p`, in `p`'s normalized coordinates.
+True if the cell `(r, c)` belongs to `p`, in `p`'s normalized coordinates: the shape is
+shifted so its smallest row and column are 1, whatever cells it was built from.
+
+```jldoctest
+julia> p = Polyomino([(5, 5), (5, 6)]);
+
+julia> (1, 1) in p, (5, 5) in p
+(true, false)
+```
 """
 function Base.in(cell::Tuple{Integer,Integer}, p::Polyomino)
     cs = p.coordinates

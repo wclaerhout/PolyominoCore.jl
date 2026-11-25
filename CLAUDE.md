@@ -203,25 +203,27 @@ Stop here. Anything else needs a concrete user first.
       **Status:** migrated (polyomino_crn#20, #21 owns its `visualize_pathway`); it
       still uses a path dependency, so pin `Polyominoes = "0.2"` once v0.2.0 is
       registered.
-- [ ] Pre-registration API review (2026-11-18). One-page overview of the public API:
+- [x] Pre-registration API review (2026-11-18). Done 2026-11-25. One-page overview of the public API:
       https://claude.ai/artifact/5P8DoqGdYAAX3e222pPaoJ
       Fix before registering (changing these after 0.2 is breaking or confusing):
-  - [ ] Mixed exception types: the `Polyomino` constructor (empty or disconnected
+  - [x] Mixed exception types: the `Polyomino` constructor (empty or disconnected
         cells), `parse_polyomino` (bad character) and every `symmetry` validation
         throw `ErrorException` via `error(...)`, while `attach`, `polyominoes(0)` and
         the plotting functions throw `ArgumentError`. Switch all to `ArgumentError`
         (Phase 1 asked for this) and test the exception types.
-  - [ ] `unique_splits` docstring signature reads `unique_splits(p)`; make it
+  - [x] `unique_splits` docstring signature reads `unique_splits(p)`; make it
         `unique_splits(p; symmetry = :translation)` so the keyword shows on the API page.
 
       Decide:
-  - [ ] `is_connected(p::Polyomino)` always returns `true` (the constructor enforces
+  - [x] `is_connected(p::Polyomino)` always returns `true` (the constructor enforces
         connectivity). Keep it for symmetry with the cell-collection method, or drop it.
-  - [ ] Coordinate convention (R5): keep `(r, c)` with rows growing upward or switch
+        **Decision:** keep; the docstring explains why it is always `true`.
+  - [x] Coordinate convention (R5): keep `(r, c)` with rows growing upward or switch
         to `(x, y)`. Affects `coordinates`, `in`, `attach` offsets, `size`.
-  - [ ] `(r, c) in p` checks normalized coordinates (the shape shifted to `(1, 1)`),
+        **Decision:** keep `(r, c)` (see R5).
+  - [x] `(r, c) in p` checks normalized coordinates (the shape shifted to `(1, 1)`),
         not the cells as passed to the constructor. Document this in a docstring on
-        the `in` method.
+        the `in` method. **Done:** docstring with a doctest.
 - [ ] Register with `@JuliaRegistrator register`. Expect the name-similarity check
       to fail: "Polyominoes" is within edit distance 2 of the registered `Polyomino`.
       Comment on the registry PR explaining the difference (a general geometry,

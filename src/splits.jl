@@ -68,7 +68,7 @@ function cells_piece(cells, S::UInt64)
 end
 
 """
-    unique_splits(p) -> Vector{Tuple{Polyomino,Polyomino,Int}}
+    unique_splits(p; symmetry = :translation) -> Vector{Tuple{Polyomino,Polyomino,Int}}
 
 Collapse `all_splits(p)` to **unique unordered pairs of shapes**, each tagged with its
 **multiplicity**: the number of distinct cuts of `p` that yield that same pair of shapes

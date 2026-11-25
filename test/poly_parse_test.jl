@@ -40,9 +40,10 @@ L = poly"""
 
 # the constructor itself rejects invalid polyominoes
 @test_throws ArgumentError Polyomino(Set([(1, 1), (1, 3)]))    # disconnected
-@test_throws ErrorException Polyomino(Set{Tuple{Int,Int}}())    # empty
+@test_throws ArgumentError Polyomino(Set{Tuple{Int,Int}}())    # empty
 
 # errors: empty, unknown char, disconnected drawing
-@test_throws ErrorException parse_polyomino("   ")
-@test_throws ErrorException parse_polyomino("#X#")
+@test_throws ArgumentError parse_polyomino("   ")
+@test_throws ArgumentError parse_polyomino("#X#")
+@test_throws ArgumentError parse_polyomino("...")              # no filled cells
 @test_throws ArgumentError parse_polyomino("#.#")              # gap splits it in two

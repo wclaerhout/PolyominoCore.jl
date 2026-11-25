@@ -62,8 +62,10 @@ fixed = Set(q for t in tetros for q in orientations(t; symmetry = :full))
 @test length(Set(canonical(q; symmetry = :rotation) for q in fixed)) == 7
 @test length(Set(canonical(q; symmetry = :full)     for q in fixed)) == 5
 
-@test_throws ErrorException orientations(L4; symmetry = :bogus)
-@test_throws ErrorException canonical(L4; symmetry = :bogus)
+@test_throws ArgumentError orientations(L4; symmetry = :bogus)
+@test_throws ArgumentError canonical(L4; symmetry = :bogus)
+@test_throws ArgumentError is_equivalent(L4, L4; symmetry = :bogus)
+@test_throws ArgumentError unique_splits(L4; symmetry = :bogus)
 
 # --- defaults are unchanged (regression against the pre-symmetry implementation) ---
 
