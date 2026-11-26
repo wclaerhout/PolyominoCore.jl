@@ -1,11 +1,14 @@
 <p align="center">
-  <img src="assets/logo.svg" alt="Polyominoes.jl logo" width="700">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.svg">
+    <img src="assets/logo.svg" alt="PolyominoCore.jl logo" width="220">
+  </picture>
 </p>
 
-# Polyominoes.jl
+# PolyominoCore.jl
 
-[![CI](https://github.com/wclaerhout/Polyominoes.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/wclaerhout/Polyominoes.jl/actions/workflows/CI.yml)
-[![Docs](https://img.shields.io/badge/docs-dev-blue.svg)](https://wclaerhout.github.io/Polyominoes.jl/dev/)
+[![CI](https://github.com/wclaerhout/PolyominoCore.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/wclaerhout/PolyominoCore.jl/actions/workflows/CI.yml)
+[![Docs](https://img.shields.io/badge/docs-dev-blue.svg)](https://wclaerhout.github.io/PolyominoCore.jl/dev/)
 
 A small, dependency-free Julia package for **polyominoes**: edge-connected sets of unit
 squares on the grid. It gives you a shape type you can draw and parse as ASCII,
@@ -16,7 +19,7 @@ optional plotting through Makie.
 ## Example
 
 ```julia
-using Polyominoes
+using PolyominoCore
 
 L = poly"""
 #.
@@ -27,7 +30,7 @@ length(polyominoes(5; symmetry = :full))     # 12 free pentominoes
 attachments(L, poly"#"; symmetry = :full)    # the L, T, S and O tetrominoes (all contain L)
 unique_splits(L; symmetry = :rotation)       # 1 distinct cut (domino + monomino), done 2 ways
 perimeter(L), nholes(L)                      # (8, 0)
-Polyominoes.symmetry_group(L)                # [:identity, :mirror_diag]
+PolyominoCore.symmetry_group(L)              # [:identity, :mirror_diag]
 using CairoMakie; visualize_polyomino(L)     # plotting loads with a Makie backend
 ```
 
@@ -37,7 +40,7 @@ using CairoMakie; visualize_polyomino(L)     # plotting loads with a Makie backe
   bottom-left cell of the bounding box. In ASCII drawings the top line is the top row.
 - A `Polyomino` is a **fixed** polyomino: `==` and `hash` compare up to translation only.
   Pass `symmetry = :rotation` (one-sided) or `symmetry = :full` (free) to the functions
-  that accept it, or compare `Polyominoes.canonical` forms.
+  that accept it, or compare `PolyominoCore.canonical` forms.
 
 ## What's included
 
@@ -51,14 +54,14 @@ using CairoMakie; visualize_polyomino(L)     # plotting loads with a Makie backe
 | Joining | `attach(a, b, offset)`, `attachments(a, b; symmetry)` |
 | Plotting (with Makie) | `visualize_polyomino`, `visualize_polyominoes` |
 
-See the [documentation](https://wclaerhout.github.io/Polyominoes.jl/dev/) for tutorials
+See the [documentation](https://wclaerhout.github.io/PolyominoCore.jl/dev/) for tutorials
 and the full API.
 
 ## How it differs from Polyomino.jl
 
 [Polyomino.jl](https://github.com/PhoenixSmaug/Polyomino.jl) (singular) generates random
 polyominoes and solves chess problems on them: rook and queen placement, guarding sets
-and minimal line covers. Polyominoes.jl does none of that. It is a general core for the
+and minimal line covers. PolyominoCore.jl does none of that. It is a general core for the
 shapes themselves: representation, symmetry, exhaustive enumeration, splitting and
 joining.
 

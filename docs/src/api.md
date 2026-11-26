@@ -1,12 +1,12 @@
 # API
 
 ```@meta
-CurrentModule = Polyominoes
+CurrentModule = PolyominoCore
 ```
 
 Exported names are listed without a prefix. The symmetry helpers are public but not
-exported; use them as `Polyominoes.canonical` or bring them in with
-`using Polyominoes: canonical`.
+exported; use them as `PolyominoCore.canonical` or bring them in with
+`using PolyominoCore: canonical`.
 
 ## Type and construction
 

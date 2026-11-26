@@ -1,8 +1,8 @@
 [deps]
 BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
-Polyominoes = "741bb4a1-64da-4b98-a1f2-8358f6fa25db"
+PolyominoCore = "741bb4a1-64da-4b98-a1f2-8358f6fa25db"
 
 [sources]
-Polyominoes = {path = ".."}
+PolyominoCore = {path = ".."}
 [compat]
 BenchmarkTools = "1"

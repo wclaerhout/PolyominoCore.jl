@@ -5,8 +5,8 @@
 # Uses only API that exists since v0.1, so the same script can be pointed at an older
 # checkout to compare (put that checkout's path in a scratch environment instead).
 
-using Polyominoes, BenchmarkTools
-using Polyominoes: canonical
+using PolyominoCore, BenchmarkTools
+using PolyominoCore: canonical
 
 # Level-by-level growth: every fixed n-omino is a fixed (n-1)-omino plus one neighbour.
 function fixed_polyominoes(n)
@@ -40,7 +40,7 @@ results = (
     unique_splits_8 = @belapsed(foreach(unique_splits, $shapes8), samples = 5, evals = 1),
     dict_keys_8 = @belapsed(count_shapes($keys8)),
 )
-if isdefined(Polyominoes, :polyominoes)   # since Phase 2
+if isdefined(PolyominoCore, :polyominoes)   # since Phase 2
     results = (; results...,
         polyominoes_10 = @belapsed(polyominoes(10), samples = 3, evals = 1),
         polyominoes_10_free = @belapsed(polyominoes(10; symmetry = :full), samples = 3, evals = 1),

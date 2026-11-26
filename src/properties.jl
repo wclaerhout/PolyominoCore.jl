@@ -75,12 +75,12 @@ of the dihedral group D4, listed in the order
 
 `:identity, :rot90, :rot180, :rot270, :mirror_lr, :mirror_ud, :mirror_diag, :mirror_antidiag`.
 
-`:rot90` is a quarter turn counter-clockwise ([`Polyominoes.rotate90`](@ref)) and
-`:mirror_lr` the left-right mirror ([`Polyominoes.reflect`](@ref)). The group has
+`:rot90` is a quarter turn counter-clockwise ([`PolyominoCore.rotate90`](@ref)) and
+`:mirror_lr` the left-right mirror ([`PolyominoCore.reflect`](@ref)). The group has
 `8 ÷ length(orientations(p; symmetry = :full))` elements.
 
 ```julia
-Polyominoes.symmetry_group(poly"##") == [:identity, :rot180, :mirror_lr, :mirror_ud]
+PolyominoCore.symmetry_group(poly"##") == [:identity, :rot180, :mirror_lr, :mirror_ud]
 ```
 """
 symmetry_group(p::Polyomino) =

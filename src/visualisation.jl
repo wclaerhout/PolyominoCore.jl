@@ -1,4 +1,4 @@
-# Plotting lives in the `PolyominoesMakieExt` package extension (ext/), which loads
+# Plotting lives in the `PolyominoCoreMakieExt` package extension (ext/), which loads
 # automatically once a Makie backend (e.g. `using CairoMakie`) is loaded. The functions
 # are declared here without methods so they are exported either way.
 

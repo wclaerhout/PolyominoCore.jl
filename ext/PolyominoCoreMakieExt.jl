@@ -1,8 +1,8 @@
-module PolyominoesMakieExt
+module PolyominoCoreMakieExt
 
 using Makie
-using Polyominoes: Polyomino, coordinates
-import Polyominoes: visualize_polyomino, visualize_polyominoes
+using PolyominoCore: Polyomino, coordinates
+import PolyominoCore: visualize_polyomino, visualize_polyominoes
 
 function check_annotation(annotation::Symbol)
     annotation in (:none, :grid, :full) || throw(ArgumentError(
@@ -83,4 +83,4 @@ function visualize_polyominoes(ps::AbstractVector{Polyomino}; ncols::Integer = 2
     return f
 end
 
-end # module PolyominoesMakieExt
+end # module PolyominoCoreMakieExt

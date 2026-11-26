@@ -66,10 +66,10 @@ end
 
 Every distinct polyomino formed by placing `b` edge-adjacent to `a` without overlap.
 `b` may first be put in any orientation allowed by `symmetry` (see
-[`Polyominoes.orientations`](@ref)); `a` stays fixed.
+[`PolyominoCore.orientations`](@ref)); `a` stays fixed.
 
 Results are distinct under `symmetry`: no two are equal after
-[`Polyominoes.canonical`](@ref)`(_; symmetry)`. Each class is represented by the first
+[`PolyominoCore.canonical`](@ref)`(_; symmetry)`. Each class is represented by the first
 placement found, so each shape is `a` plus one copy of `b` (up to translation). The
 results are sorted by `coordinates`.
 

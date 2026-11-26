@@ -1,4 +1,4 @@
-using Polyominoes: rotate90, reflect, orientations, canonical, is_equivalent
+using PolyominoCore: rotate90, reflect, orientations, canonical, is_equivalent
 
 L4   = poly"""
 #.

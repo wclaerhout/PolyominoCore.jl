@@ -1,4 +1,4 @@
-using Polyominoes: canonical, orientations, is_equivalent
+using PolyominoCore: canonical, orientations, is_equivalent
 
 mono = poly"#"
 dom  = poly"##"
