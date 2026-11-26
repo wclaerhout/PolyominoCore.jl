@@ -59,7 +59,7 @@ and the full API.
 
 ## How it differs from Polyomino.jl
 
-[Polyomino.jl](https://github.com/PhoenixSmaug/Polyomino.jl) (singular) generates random
+[Polyomino.jl](https://github.com/PhoenixSmaug/Polyomino.jl) generates random
 polyominoes and solves chess problems on them: rook and queen placement, guarding sets
 and minimal line covers. PolyominoCore.jl does none of that. It is a general core for the
 shapes themselves: representation, symmetry, exhaustive enumeration, splitting and
