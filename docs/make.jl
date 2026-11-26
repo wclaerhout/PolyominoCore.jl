@@ -1,6 +1,6 @@
 using Documenter
 using Literate
-using Polyominoes
+using PolyominoCore
 using CairoMakie   # loads the plotting extension for the tutorials
 
 # Every Literate script in docs/tutorials/ becomes a page under "Tutorials", in
@@ -30,16 +30,25 @@ for file in sort(filter(endswith(".jl"), readdir(TUTORIALS_IN)))
     push!(tutorial_pages, joinpath("tutorials", name * ".md"))
 end
 
-DocMeta.setdocmeta!(Polyominoes, :DocTestSetup, :(using Polyominoes); recursive = true)
+# Documenter picks up docs/src/assets/logo.svg (and logo-dark.svg for dark themes) as
+# the sidebar logo. The repo keeps one copy in assets/, so copy it in at build time.
+mkpath(joinpath(@__DIR__, "src", "assets"))
+for name in ("logo.svg", "logo-dark.svg")
+    cp(joinpath(@__DIR__, "..", "assets", name), joinpath(@__DIR__, "src", "assets", name);
+        force = true)
+end
+
+DocMeta.setdocmeta!(PolyominoCore, :DocTestSetup, :(using PolyominoCore); recursive = true)
 
 makedocs(;
-    sitename = "Polyominoes.jl",
-    modules = [Polyominoes, Base.get_extension(Polyominoes, :PolyominoesMakieExt)],
+    sitename = "PolyominoCore.jl",
+    modules = [PolyominoCore, Base.get_extension(PolyominoCore, :PolyominoCoreMakieExt)],
     authors = "Ward Claerhout",
     format = Documenter.HTML(;
         prettyurls = get(ENV, "CI", "false") == "true",
-        canonical = "https://wclaerhout.github.io/Polyominoes.jl",
+        canonical = "https://wclaerhout.github.io/PolyominoCore.jl",
         assets = String[],
+        sidebar_sitename = false,   # the logo already shows the package name
     ),
     pages = [
         "Home" => "index.md",
@@ -50,7 +59,7 @@ makedocs(;
 )
 
 deploydocs(;
-    repo = "github.com/wclaerhout/Polyominoes.jl",
+    repo = "github.com/wclaerhout/PolyominoCore.jl",
     devbranch = "main",
     push_preview = false,
 )

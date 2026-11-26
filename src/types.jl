@@ -34,7 +34,7 @@ bottom-left cell of the bounding box.
 `cells` may be any collection of `(r, c)` tuples (a `Set`, a `Vector`, a generator);
 duplicates are ignored. The shape is normalized for translation (smallest row and
 column become 1), so `==` and `hash` compare shapes up to translation only. Use the
-`symmetry` keyword of [`Polyominoes.canonical`](@ref) to also identify rotations or
+`symmetry` keyword of [`PolyominoCore.canonical`](@ref) to also identify rotations or
 reflections. Throws if `cells` is empty or not connected.
 """
 struct Polyomino

@@ -1,4 +1,4 @@
-using Polyominoes: symmetry_group, orientations, rotate90, reflect
+using PolyominoCore: symmetry_group, orientations, rotate90, reflect
 
 ring = poly"""
 ###

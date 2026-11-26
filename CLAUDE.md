@@ -1,6 +1,7 @@
 # Plan: from extracted core to a lean, general-purpose package
 
-Status: draft, 2026-11-17. Applies to `Polyominoes.jl` v0.1.1.
+Status: draft, 2026-11-17. Applies to `Polyominoes.jl` v0.1.1. The package was renamed
+`PolyominoCore.jl` on 2026-11-26 (see R6); older entries below keep the old name.
 
 ## How to work in this repo
 
@@ -201,7 +202,7 @@ Stop here. Anything else needs a concrete user first.
       JET as a test dependency (runs on Julia ≥ 1.12); version set to `0.2.0`
 - [ ] `polyomino_crn` migrated and depending on v0.2
       **Status:** migrated (polyomino_crn#20, #21 owns its `visualize_pathway`); it
-      still uses a path dependency, so pin `Polyominoes = "0.2"` once v0.2.0 is
+      still uses a path dependency, so pin `PolyominoCore = "0.2"` once v0.2.0 is
       registered.
 - [x] Pre-registration API review (2026-11-18). Done 2026-11-25. One-page overview of the public API:
       https://claude.ai/artifact/5P8DoqGdYAAX3e222pPaoJ
@@ -224,11 +225,13 @@ Stop here. Anything else needs a concrete user first.
   - [x] `(r, c) in p` checks normalized coordinates (the shape shifted to `(1, 1)`),
         not the cells as passed to the constructor. Document this in a docstring on
         the `in` method. **Done:** docstring with a doctest.
-- [ ] Register with `@JuliaRegistrator register`. Expect the name-similarity check
-      to fail: "Polyominoes" is within edit distance 2 of the registered `Polyomino`.
-      Comment on the registry PR explaining the difference (a general geometry,
-      symmetry and enumeration core versus chess problems and random generation) and
-      ask for the `Override AutoMerge: name similarity is okay` label.
+- [ ] Rename the GitHub repository to `PolyominoCore.jl` (Settings → Rename) and update
+      the local `origin` URL; GitHub redirects the old URLs.
+- [ ] Register with `@JuliaRegistrator register`. The rename to `PolyominoCore` should
+      clear the name-similarity check that "Polyominoes" failed against `Polyomino`.
+      If AutoMerge still flags it, comment on the registry PR explaining the difference
+      (a general geometry, symmetry and enumeration core versus chess problems and
+      random generation).
 - [ ] Optional later: a short announcement after registration. Either a Discourse
       "Package Announcements" post (5–10 lines: what it does, one example, how it
       differs from `Polyomino.jl`, links) or one message in Slack/Zulip
@@ -275,8 +278,10 @@ downstream), or switch to `(x, y)`, which is more conventional in combinatorics
 software? Recommendation: keep `(r, c)` and document it prominently; changing it brings
 no real gain.
 
-**R6. Name.** Keep "Polyominoes" and request the override (recommended), or choose a
-name that passes the automatic check. Decide before Phase 5.
+**R6. Name.** Keep "Polyominoes" and request the override, or choose a name that passes
+the automatic check. **Decision (2026-11-26):** rename to `PolyominoCore`, after forum
+discussion. Module, extension (`PolyominoCoreMakieExt`), docs and URLs renamed; the UUID is
+unchanged (the package was never registered).
 
 ## Downstream migration (`polyomino_crn`)
 
@@ -285,6 +290,7 @@ Before each breaking release:
 1. Search for uses of every removed or renamed name: `Cell`, `Shift`, `n_blocks`,
    `poly_height`, `poly_width`, `concatenate`, `boundary_cells`,
    `concatenation_possible`, `all_valid_concatenations`, `visualize_pathway`.
-2. Pin `Polyominoes = "0.1"` in `polyomino_crn` until it is migrated.
+2. Pin `PolyominoCore = "0.2"` (formerly `Polyominoes = "0.1"`) in `polyomino_crn` until
+   it is migrated.
 3. Port the `side`/`pos` helpers into `polyomino_crn` on top of `attach`, and check that
    its benchmark results (assembly indices, archive contents) are unchanged.

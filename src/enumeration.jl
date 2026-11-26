@@ -7,7 +7,7 @@ All polyominoes with `n` cells, one per equivalence class under `symmetry`:
 - `:rotation`:    one-sided polyominoes (A000988: 1, 1, 2, 7, 18, 60, …)
 - `:full`:        free polyominoes (A000105: 1, 1, 2, 5, 12, 35, …)
 
-Each class is represented by its [`Polyominoes.canonical`](@ref) form, and the result is
+Each class is represented by its [`PolyominoCore.canonical`](@ref) form, and the result is
 sorted by `coordinates`, so the output is deterministic.
 
 Shapes are grown level by level: every `n`-omino is an `(n-1)`-omino plus one
