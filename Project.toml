@@ -1,4 +1,4 @@
-name = "PolyominoCore"
+name = "PolyominoTools"
 uuid = "741bb4a1-64da-4b98-a1f2-8358f6fa25db"
 version = "0.2.0"
 
@@ -6,7 +6,7 @@ version = "0.2.0"
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
 
 [extensions]
-PolyominoCoreMakieExt = "Makie"
+PolyominoToolsMakieExt = "Makie"
 
 [compat]
 Aqua = "0.8"

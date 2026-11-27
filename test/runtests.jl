@@ -1,4 +1,4 @@
-using PolyominoCore
+using PolyominoTools
 using Test
 using Aqua
 using JET
@@ -13,16 +13,16 @@ using JET
 
 @testset "Plotting without Makie" begin
     # the extension must not be loaded before Makie is
-    @test Base.get_extension(PolyominoCore, :PolyominoCoreMakieExt) === nothing
+    @test Base.get_extension(PolyominoTools, :PolyominoToolsMakieExt) === nothing
     @test_throws MethodError visualize_polyomino(poly"#")
 end
 
 @testset "Plotting (Makie extension)" include("visualisation_test.jl")
 
-@testset "Aqua" Aqua.test_all(PolyominoCore)
+@testset "Aqua" Aqua.test_all(PolyominoTools)
 
 # JET's results depend on the compiler, so each JET release supports only certain Julia
 # versions. Run it on current Julia only; older versions just install an older JET.
 if VERSION >= v"1.12"
-    @testset "JET" JET.test_package(PolyominoCore; target_modules = (PolyominoCore,))
+    @testset "JET" JET.test_package(PolyominoTools; target_modules = (PolyominoTools,))
 end

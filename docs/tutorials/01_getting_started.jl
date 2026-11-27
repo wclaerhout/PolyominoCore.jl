@@ -4,8 +4,8 @@
 # build a shape, look at it, compare shapes up to symmetry, enumerate them, take them
 # apart and put them together, and plot them.
 
-using PolyominoCore
-using PolyominoCore: rotate90, reflect, orientations, canonical, is_equivalent, symmetry_group
+using PolyominoTools
+using PolyominoTools: rotate90, reflect, orientations, canonical, is_equivalent, symmetry_group
 
 # ## Building and printing a shape
 #
