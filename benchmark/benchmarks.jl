@@ -1,4 +1,4 @@
-# Representation benchmarks (research question R1 in CLAUDE.md).
+# Representation benchmarks: Set vs sorted Vector storage for Polyomino.
 #
 #   julia --project=benchmark benchmark/benchmarks.jl
 #
