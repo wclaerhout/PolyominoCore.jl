@@ -1,4 +1,4 @@
-using PolyominoCore
+using PolyominoTools
 using CairoMakie
 CairoMakie.activate!(type = "png")   #hide
 
@@ -7,7 +7,7 @@ length(poly4)
 
 visualize_polyominoes(poly4; ncols = 2)
 
-using PolyominoCore: is_equivalent
+using PolyominoTools: is_equivalent
 
 function has_fair_split(p::Polyomino; symmetry = :full)
     splits = all_splits(p)

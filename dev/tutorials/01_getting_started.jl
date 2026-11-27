@@ -1,5 +1,5 @@
-using PolyominoCore
-using PolyominoCore: rotate90, reflect, orientations, canonical, is_equivalent, symmetry_group
+using PolyominoTools
+using PolyominoTools: rotate90, reflect, orientations, canonical, is_equivalent, symmetry_group
 
 T = poly"""
 ###
