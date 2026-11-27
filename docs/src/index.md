@@ -1,4 +1,4 @@
-# PolyominoCore.jl
+# PolyominoTools.jl
 
 A small Julia package for **polyominoes**: finite, edge-connected sets of unit squares
 on the grid. It covers the basics that most work with polyominoes needs:
@@ -14,7 +14,7 @@ It has no dependencies. Plotting is a package extension that loads when a Makie
 backend such as CairoMakie is loaded.
 
 ```julia
-using PolyominoCore
+using PolyominoTools
 
 L = poly"""
 #.
@@ -32,19 +32,19 @@ attachments(L, poly"#"; symmetry = :full)  # the tetrominoes that contain L
 - **A `Polyomino` is a fixed polyomino.** `==` and `hash` compare shapes up to
   translation only. To identify rotations (one-sided polyominoes) or rotations and
   reflections (free polyominoes), pass `symmetry = :rotation` or `symmetry = :full` to
-  the functions that take it, or compare `PolyominoCore.canonical` forms.
+  the functions that take it, or compare `PolyominoTools.canonical` forms.
 
 ## Installation
 
 ```julia
 using Pkg
-Pkg.add(url = "https://github.com/wclaerhout/PolyominoCore.jl")
+Pkg.add(url = "https://github.com/wclaerhout/PolyominoTools.jl")
 ```
 
 ## Related packages
 
 [Polyomino.jl](https://github.com/PhoenixSmaug/Polyomino.jl) (singular) generates random
 polyominoes (Eden model, uniform sampling) and solves chess problems on them: rook and
-queen placement, guarding sets, minimal line covers. PolyominoCore.jl does none of that;
+queen placement, guarding sets, minimal line covers. PolyominoTools.jl does none of that;
 it is a general core for the shapes themselves: representation, symmetry, exhaustive
 enumeration, splitting and joining.

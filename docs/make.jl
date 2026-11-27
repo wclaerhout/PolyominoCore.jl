@@ -1,6 +1,6 @@
 using Documenter
 using Literate
-using PolyominoCore
+using PolyominoTools
 using CairoMakie   # loads the plotting extension for the tutorials
 
 # Every Literate script in docs/tutorials/ becomes a page under "Tutorials", in
@@ -38,15 +38,15 @@ for name in ("logo.svg", "logo-dark.svg")
         force = true)
 end
 
-DocMeta.setdocmeta!(PolyominoCore, :DocTestSetup, :(using PolyominoCore); recursive = true)
+DocMeta.setdocmeta!(PolyominoTools, :DocTestSetup, :(using PolyominoTools); recursive = true)
 
 makedocs(;
-    sitename = "PolyominoCore.jl",
-    modules = [PolyominoCore, Base.get_extension(PolyominoCore, :PolyominoCoreMakieExt)],
+    sitename = "PolyominoTools.jl",
+    modules = [PolyominoTools, Base.get_extension(PolyominoTools, :PolyominoToolsMakieExt)],
     authors = "Ward Claerhout",
     format = Documenter.HTML(;
         prettyurls = get(ENV, "CI", "false") == "true",
-        canonical = "https://wclaerhout.github.io/PolyominoCore.jl",
+        canonical = "https://wclaerhout.github.io/PolyominoTools.jl",
         assets = String[],
         sidebar_sitename = false,   # the logo already shows the package name
     ),
@@ -59,7 +59,7 @@ makedocs(;
 )
 
 deploydocs(;
-    repo = "github.com/wclaerhout/PolyominoCore.jl",
+    repo = "github.com/wclaerhout/PolyominoTools.jl",
     devbranch = "main",
     push_preview = false,
 )

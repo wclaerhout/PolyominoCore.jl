@@ -10,7 +10,7 @@
 # Let's start with polyominoes with 4 cells. It should be quite obvious
 # that polyominoes with an odd number of cells can't be split into fair shares.
 
-using PolyominoCore
+using PolyominoTools
 using CairoMakie
 CairoMakie.activate!(type = "png")   #hide
 
@@ -25,7 +25,7 @@ visualize_polyominoes(poly4; ncols = 2)
 # will need the `is_equivalent` function to take the symmetry into account.
 # With `symmetry = :full`, a piece and its mirror image count as equal.
 
-using PolyominoCore: is_equivalent
+using PolyominoTools: is_equivalent
 
 function has_fair_split(p::Polyomino; symmetry = :full)
     splits = all_splits(p)

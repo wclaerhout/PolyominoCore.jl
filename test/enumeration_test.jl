@@ -1,4 +1,4 @@
-using PolyominoCore: canonical, orientations
+using PolyominoTools: canonical, orientations
 
 # OEIS A001168 (fixed), A000988 (one-sided), A000105 (free), n = 1…10
 const OEIS = Dict(
